@@ -1,7 +1,7 @@
-//! FOR SEO PURPOSE AND NONINFRINGEMENT.
 import { Inter } from "next/font/google";
+import NextTopLoader from "nextjs-toploader";
 import "@/styles/globals.css";
-import ProviderAuth from "@/lib/ProviderAuth";
+import Providers from "@/lib/providers";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -11,10 +11,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <ProviderAuth>
-      <html lang="en">
-        <body className={inter.className}>{children}</body>
-      </html>
-    </ProviderAuth>
+    <html lang="en">
+      <body className={`${inter.className} bg-dark-1 dark text-white`}>
+        <NextTopLoader color="#877EFF" />
+        <Providers>{children}</Providers>
+      </body>
+    </html>
   );
 }

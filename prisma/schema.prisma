@@ -1,0 +1,31 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "cockroachdb"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  bio           String
+  name          String
+  Thread        Thread[]
+  userId        String   @id @default(uuid())
+  username      String   @unique
+  profile_photo String
+}
+
+model Thread {
+  id        String   @id @default(uuid())
+  text      String
+  createdAt DateTime @default(now())
+  parentId  String?
+
+  author     User   @relation(fields: [userUserId], references: [userId])
+  userUserId String
+
+  children Thread[] @relation("ThreadToChildren")
+  parent   Thread?  @relation("ThreadToChildren", fields: [threadId], references: [id])
+  threadId String?
+}
