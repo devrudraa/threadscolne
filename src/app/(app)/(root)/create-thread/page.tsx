@@ -1,3 +1,4 @@
+import CreateThreadSkeleton from "@/components/Skeleton/CreateThreadSkeleton";
 import PostThread from "@/components/forms/PostThread";
 import { IsUserOnBoarded } from "@/lib/actions/utils.actions";
 import { currentUser } from "@clerk/nextjs";

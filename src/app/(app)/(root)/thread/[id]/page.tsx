@@ -1,10 +1,11 @@
+import ThreadCardSkeleton from "@/components/Skeleton/ThreadCardSkeleton";
 import ThreadCard from "@/components/cards/ThreadCard";
 import CommentForm from "@/components/forms/Comment";
 import { FetchThreadById } from "@/lib/actions/threads.actions";
 import { IsUserOnBoarded } from "@/lib/actions/utils.actions";
 import { currentUser } from "@clerk/nextjs";
 import { redirect } from "next/navigation";
-import { FC } from "react";
+import { FC, Suspense } from "react";
 
 interface pageProps {
   params: { id: string };

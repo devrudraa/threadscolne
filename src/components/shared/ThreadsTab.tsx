@@ -22,8 +22,8 @@ const ThreadsTab: FC<ThreadsTabProps> = async ({
       {userThreads.map((thread) => {
         return (
           <ThreadCard
-            id={thread.id}
             key={thread.id}
+            id={thread.id}
             author={thread.author}
             comments={thread.children}
             content={thread.text}

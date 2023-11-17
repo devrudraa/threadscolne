@@ -1,8 +1,7 @@
 import ThreadCard from "@/components/cards/ThreadCard";
-import PostThread from "@/components/forms/PostThread";
 import { FetchThreads } from "@/lib/actions/threads.actions";
 import { IsUserOnBoarded } from "@/lib/actions/utils.actions";
-import { UserButton, currentUser } from "@clerk/nextjs";
+import { currentUser } from "@clerk/nextjs";
 import { redirect } from "next/navigation";
 
 export default async function Home() {
