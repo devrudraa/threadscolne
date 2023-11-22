@@ -39,7 +39,7 @@ const AccountProfile: FC<AccountProfileProps> = ({ btnTitle, user }) => {
   const form = useForm<UserType>({
     resolver: zodResolver(UserValidation),
     defaultValues: {
-      profile_photo: user?.profile_image || "",
+      image: user?.profile_image || "",
       name: user.name || "",
       username: user.username || "",
       bio: user.bio || "",
@@ -48,19 +48,19 @@ const AccountProfile: FC<AccountProfileProps> = ({ btnTitle, user }) => {
 
   // 2. Define a.name
   async function onSubmit(values: UserType) {
-    const blob = values.profile_photo;
+    const blob = values.image;
 
     const hasImageChanged = isBase64Image(blob);
 
     if (hasImageChanged) {
       const imgRes = await startUpload(files);
       if (imgRes && imgRes[0].url) {
-        values.profile_photo = imgRes[0].url;
+        values.image = imgRes[0].url;
       }
     }
 
     const response = await AddUser({
-      userData: { ...values, userId: user.userId },
+      userData: { ...values, id: user.userId },
     });
 
     if (response === 409) {
@@ -103,7 +103,7 @@ const AccountProfile: FC<AccountProfileProps> = ({ btnTitle, user }) => {
       >
         <FormField
           control={form.control}
-          name="profile_photo"
+          name="image"
           render={({ field }) => (
             <FormItem className="flex items-center gap-4">
               <FormLabel className="account-form_image-label">

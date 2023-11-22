@@ -3,7 +3,7 @@ import prisma from "../PrismaClient";
 export async function DoesUserExist(userId: string): Promise<boolean> {
   const user = await prisma.user.findFirst({
     where: {
-      userId: userId,
+      id: userId,
     },
   });
 
@@ -23,7 +23,7 @@ export async function IsUserOnBoarded({
   if (!userExist) return false;
 
   const filedData = await GetUserDataFiled({
-    filed: "userId",
+    filed: "id",
     value: userId,
   });
 
@@ -49,7 +49,7 @@ export async function GetUserDataFiled({
 export async function GetUserData({ userId }: { userId: string }) {
   return await prisma.user.findFirst({
     where: {
-      userId: userId,
+      id: userId,
     },
     include: {
       Thread: {

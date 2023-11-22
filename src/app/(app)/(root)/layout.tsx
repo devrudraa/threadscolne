@@ -2,12 +2,17 @@ import BottomBar from "@/components/shared/Bottombar";
 import LeftSideBar from "@/components/shared/Leftsidebar";
 import RightSideBar from "@/components/shared/Rightsidebar";
 import TopBar from "@/components/shared/Topbar";
+import getAuthSession from "@/lib/authOptions";
+import { redirect } from "next/navigation";
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const session = await getAuthSession();
+
+  if (!session) redirect("/auth/sign-in");
   return (
     <>
       <TopBar />

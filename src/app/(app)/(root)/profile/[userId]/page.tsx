@@ -1,6 +1,5 @@
 import ProfileHeader from "@/components/shared/ProfileHeader";
-import { GetUserData, IsUserOnBoarded } from "@/lib/actions/utils.actions";
-import { currentUser } from "@clerk/nextjs";
+import { GetUserData } from "@/lib/actions/utils.actions";
 import { redirect } from "next/navigation";
 import { FC } from "react";
 
@@ -8,26 +7,27 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import Image from "next/image";
 import { profileTabs } from "@/Constants";
 import ThreadsTab from "@/components/shared/ThreadsTab";
+import getAuthSession from "@/lib/authOptions";
 
 interface pageProps {
   params: { userId: string };
 }
 const Page: FC<pageProps> = async ({ params }) => {
-  const user = await currentUser();
-  if (!user || !user.id) return null;
+  const session = await getAuthSession();
+  if (!session) return null;
 
   const userData = await GetUserData({ userId: params.userId });
-  if (!userData?.bio || !userData) return redirect("/onboarding");
+  if (!userData) return redirect("/auth/sign-in");
 
   return (
     <section>
       <ProfileHeader
         accountId={params.userId}
-        authUserId={user.id}
+        authUserId={session.user.id}
         bio={userData?.bio}
-        imageUrl={userData.profile_photo}
+        imageUrl={userData.image}
         name={userData.name}
-        username={userData.username}
+        username={userData.username!}
       />
       <div className="mt-9">
         <Tabs defaultValue="threads" className="w-full">
@@ -59,7 +59,7 @@ const Page: FC<pageProps> = async ({ params }) => {
             >
               {/* @ts-ignore */}
               <ThreadsTab
-                currentUserId={user.id}
+                currentUserId={session.user.id}
                 accountId={params.userId}
                 accountType="User"
               />

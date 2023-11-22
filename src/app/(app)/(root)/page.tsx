@@ -1,19 +1,18 @@
 import ThreadCard from "@/components/cards/ThreadCard";
 import { FetchThreads } from "@/lib/actions/threads.actions";
 import { IsUserOnBoarded } from "@/lib/actions/utils.actions";
-import { currentUser } from "@clerk/nextjs";
+import getAuthSession from "@/lib/authOptions";
 import { redirect } from "next/navigation";
 
 export default async function Home() {
-  const user = await currentUser();
-  if (!user || !user.id) return null;
+  const session = await getAuthSession();
 
-  const userOnBoarded = await IsUserOnBoarded({ userId: user.id });
+  const userOnBoarded = await IsUserOnBoarded({
+    userId: session?.user?.id as string,
+  });
   if (!userOnBoarded) return redirect("/onboarding");
 
   const Threads = await FetchThreads({ pageNumber: 1, pageSize: 20 });
-
-  // console.log(Threads.Threads);
 
   return (
     <section>
@@ -29,9 +28,10 @@ export default async function Home() {
                 <ThreadCard
                   key={threadCard.id}
                   id={threadCard.id}
-                  currentUser={user.id}
+                  currentUser={session?.user.id!}
                   parentId={threadCard?.parentId}
                   content={threadCard.text}
+                  // @ts-ignore
                   author={threadCard.author}
                   createdAt={threadCard.createdAt}
                   comments={threadCard.children}

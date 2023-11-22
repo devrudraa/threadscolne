@@ -19,10 +19,11 @@ import { Button } from "../ui/button";
 
 import { CommentValidation } from "@/lib/validators/Thread";
 import { addCommentToThread } from "@/lib/actions/threads.actions";
+import { defaultUserImage } from "@/lib/contants";
 
 interface Props {
   threadId: string;
-  currentUserImg: string;
+  currentUserImg: string | null | undefined;
   currentUserId: string;
 }
 
@@ -40,7 +41,7 @@ function CommentForm({ threadId, currentUserImg, currentUserId }: Props) {
     await addCommentToThread({
       threadId: threadId,
       commentText: values.thread,
-      userId: currentUserId,
+      id: currentUserId,
       path: pathname,
     });
 
@@ -57,7 +58,7 @@ function CommentForm({ threadId, currentUserImg, currentUserId }: Props) {
             <FormItem className="flex w-full items-center gap-3">
               <FormLabel>
                 <Image
-                  src={currentUserImg}
+                  src={currentUserImg ? currentUserImg : defaultUserImage}
                   alt="current_user"
                   width={48}
                   height={48}

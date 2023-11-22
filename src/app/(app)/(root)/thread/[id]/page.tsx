@@ -3,7 +3,7 @@ import ThreadCard from "@/components/cards/ThreadCard";
 import CommentForm from "@/components/forms/Comment";
 import { FetchThreadById } from "@/lib/actions/threads.actions";
 import { IsUserOnBoarded } from "@/lib/actions/utils.actions";
-import { currentUser } from "@clerk/nextjs";
+import getAuthSession from "@/lib/authOptions";
 import { redirect } from "next/navigation";
 import { FC, Suspense } from "react";
 
@@ -11,10 +11,10 @@ interface pageProps {
   params: { id: string };
 }
 const Page: FC<pageProps> = async ({ params }) => {
-  const user = await currentUser();
-  if (!params.id || !user) return null;
+  const session = await getAuthSession();
+  if (!params.id || !session) return null;
 
-  const userOnBoarded = await IsUserOnBoarded({ userId: user.id });
+  const userOnBoarded = await IsUserOnBoarded({ userId: session.user.id });
 
   if (!userOnBoarded) return redirect("/onboarding");
 
@@ -38,8 +38,8 @@ const Page: FC<pageProps> = async ({ params }) => {
       <div className="mt-7">
         <CommentForm
           threadId={params.id}
-          currentUserImg={user.imageUrl}
-          currentUserId={user.id}
+          currentUserImg={session.user.image}
+          currentUserId={session.user.id}
         />
       </div>
 

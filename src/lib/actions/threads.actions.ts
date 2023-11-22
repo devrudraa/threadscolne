@@ -19,13 +19,13 @@ export async function CreateThread({
     data: {
       text: text,
       author: {
-        connect: { userId: authorId },
+        connect: { id: authorId },
       },
     },
   });
 
   await prisma.user.update({
-    where: { userId: authorId },
+    where: { id: authorId },
     data: {
       Thread: { connect: { id: createdThread.id } },
     },
@@ -60,8 +60,8 @@ export async function FetchThreads({
       author: {
         select: {
           name: true,
-          profile_photo: true,
-          userId: true,
+          image: true,
+          id: true,
           username: true,
         },
       },
@@ -70,7 +70,7 @@ export async function FetchThreads({
         include: {
           author: {
             select: {
-              profile_photo: true,
+              image: true,
             },
           },
         },
@@ -101,8 +101,8 @@ export async function FetchThreadById(threadId: string) {
       author: {
         select: {
           name: true,
-          profile_photo: true,
-          userId: true,
+          image: true,
+          id: true,
           username: true,
         },
       },
@@ -111,8 +111,8 @@ export async function FetchThreadById(threadId: string) {
           author: {
             select: {
               name: true,
-              profile_photo: true,
-              userId: true,
+              image: true,
+              id: true,
               username: true,
             },
           },
@@ -122,7 +122,7 @@ export async function FetchThreadById(threadId: string) {
               author: {
                 select: {
                   name: true,
-                  profile_photo: true,
+                  image: true,
                 },
               },
             },
@@ -138,7 +138,7 @@ export async function FetchThreadById(threadId: string) {
 interface addCommentToThreadProps {
   threadId: string;
   commentText: string;
-  userId: string;
+  id: string;
   path: string;
 }
 
@@ -146,7 +146,7 @@ export async function addCommentToThread({
   commentText,
   path,
   threadId,
-  userId,
+  id,
 }: addCommentToThreadProps) {
   const originalThread = await prisma.thread.findFirst({
     where: {
@@ -166,7 +166,7 @@ export async function addCommentToThread({
           text: commentText,
           author: {
             connect: {
-              userId: userId,
+              id: id,
             },
           },
         },
@@ -181,7 +181,7 @@ export async function addCommentToThread({
   //       text: commentText,
   //       author: {
   //         connect: {
-  //           userId: userId,
+  //           id: id,
   //         },
   //       },
   //     },
@@ -191,14 +191,14 @@ export async function addCommentToThread({
 //* ---------------------------------------------------------------fetchUserPosts()------------------------------------------------
 
 interface fetchUserPostsProps {
-  userId: string;
+  id: string;
 }
 
-export async function fetchUserPosts({ userId }: fetchUserPostsProps) {
+export async function fetchUserPosts({ id }: fetchUserPostsProps) {
   const userThread = prisma.thread.findMany({
     where: {
       author: {
-        userId: userId,
+        id: id,
       },
     },
     include: {
@@ -206,8 +206,8 @@ export async function fetchUserPosts({ userId }: fetchUserPostsProps) {
       author: {
         select: {
           name: true,
-          profile_photo: true,
-          userId: true,
+          image: true,
+          id: true,
         },
       },
     },

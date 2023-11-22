@@ -7,7 +7,7 @@ interface ProfileHeaderProps {
   name: string;
   username: string;
   imageUrl: string;
-  bio: string;
+  bio: string | null;
 }
 const ProfileHeader: FC<ProfileHeaderProps> = ({
   accountId,

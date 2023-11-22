@@ -1,5 +1,4 @@
-import { OrganizationSwitcher, SignOutButton, SignedIn } from "@clerk/nextjs";
-import { dark } from "@clerk/themes";
+import { Button } from "@nextui-org/react";
 import Image from "next/image";
 import Link from "next/link";
 import React from "react";
@@ -19,7 +18,8 @@ const TopBar = () => {
 
       <div className="flex items-center gap-1">
         <div className="block md:hidden">
-          <SignedIn>
+          <Button>Sign in sign out</Button>
+          {/* <SignedIn>
             <SignOutButton>
               <div className="flex cursor-pointer">
                 <Image
@@ -30,17 +30,18 @@ const TopBar = () => {
                 />
               </div>
             </SignOutButton>
-          </SignedIn>
+          </SignedIn> */}
         </div>
 
-        <OrganizationSwitcher
+        {/* <OrganizationSwitcher
           appearance={{
             baseTheme: dark,
             elements: {
               organizationSwitcherTrigger: "py-2 px-4",
             },
           }}
-        />
+        /> */}
+        <Button>Organization switch</Button>
       </div>
     </nav>
   );

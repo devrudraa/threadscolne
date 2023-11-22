@@ -1,11 +1,11 @@
 "use server";
 import prisma from "../PrismaClient";
 interface AddUserProps {
-  userId: string;
+  id: string;
   username: string;
   name: string;
   bio: string;
-  profile_photo: string;
+  image: string;
 }
 
 export async function AddUser({ userData }: { userData: AddUserProps }) {
