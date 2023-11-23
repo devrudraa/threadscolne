@@ -1,4 +1,6 @@
+"use server";
 import prisma from "../PrismaClient";
+import { UsernameValidator } from "../validators/Username";
 
 export async function DoesUserExist(userId: string): Promise<boolean> {
   const user = await prisma.user.findFirst({
@@ -59,4 +61,41 @@ export async function GetUserData({ userId }: { userId: string }) {
       },
     },
   });
+}
+
+export async function isUsernameUnique(username: string): Promise<boolean> {
+  const user = await prisma.user.findFirst({
+    where: {
+      username: username,
+    },
+  });
+  return !user;
+}
+
+interface setUserUsernameProps {
+  username: string;
+  id: string | undefined;
+}
+
+export async function setUserUsername({
+  username,
+  id,
+}: setUserUsernameProps): Promise<boolean> {
+  if (!id) return false;
+
+  try {
+    const validatedData = UsernameValidator.parse(username);
+
+    await prisma.user.update({
+      where: {
+        id: id,
+      },
+      data: {
+        username: validatedData.username,
+      },
+    });
+    return true;
+  } catch (err) {
+    return false;
+  }
 }
