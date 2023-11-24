@@ -15,10 +15,11 @@ import { Input } from "@nextui-org/react";
 import { UsernameType, UsernameValidator } from "@/lib/validators/Username";
 import { setUserUsername } from "@/lib/actions/utils.actions";
 import { useSession } from "next-auth/react";
-import { redirect } from "next/navigation";
+import { useRouter } from "next/navigation";
 
 interface ChooseUsernameProps {}
 const ChooseUsernameForm: FC<ChooseUsernameProps> = ({}) => {
+  const router = useRouter();
   const [isCheckingUsername, setIsCheckingUsername] = useState<boolean>(false);
   const { data, status } = useSession();
   const form = useForm<UsernameType>({
@@ -33,17 +34,19 @@ const ChooseUsernameForm: FC<ChooseUsernameProps> = ({}) => {
   }
 
   if (data?.user.username) {
-    redirect("/");
+    router.replace("/");
   }
 
   async function checkUsername(e: UsernameType) {
     setIsCheckingUsername(true);
+
     const response = await setUserUsername({
       id: data?.user.id,
       username: e.username,
     });
+    console.log("responce", response);
 
-    if (response) redirect("/");
+    if (response) router.replace("/");
 
     // Todo: Show a toast that the username didn't change because of some error
     setIsCheckingUsername(false);
@@ -59,7 +62,7 @@ const ChooseUsernameForm: FC<ChooseUsernameProps> = ({}) => {
             render={({ field }) => (
               <FormItem>
                 <FormControl>
-                  <Input label="Username" {...field} />
+                  <Input autoComplete="off" label="Username" {...field} />
                 </FormControl>
                 <FormDescription>This is your unique name.</FormDescription>
                 <FormMessage />

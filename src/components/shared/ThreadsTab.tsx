@@ -13,7 +13,7 @@ const ThreadsTab: FC<ThreadsTabProps> = async ({
   accountType,
   currentUserId,
 }) => {
-  const userThreads = await fetchUserPosts({ userId: accountId });
+  const userThreads = await fetchUserPosts({ id: accountId });
 
   if (!userThreads) redirect("/");
 

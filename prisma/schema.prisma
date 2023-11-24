@@ -9,12 +9,13 @@ datasource db {
 
 model User {
   //* Next Auth
-  id       String    @id @default(cuid())
-  name     String
-  email    String?   @unique
-  image    String    @default("https://utfs.io/f/309dd8c4-0329-41cf-ba9e-4cce72910d54-nm33wo.jpg")
-  accounts Account[]
-  sessions Session[]
+  id            String    @id @default(cuid())
+  name          String
+  email         String?   @unique
+  emailVerified DateTime?
+  image         String    @default("https://utfs.io/f/309dd8c4-0329-41cf-ba9e-4cce72910d54-nm33wo.jpg")
+  accounts      Account[]
+  sessions      Session[]
 
   //* Custon Values
   bio      String?

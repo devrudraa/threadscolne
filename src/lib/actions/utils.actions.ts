@@ -84,18 +84,20 @@ export async function setUserUsername({
   if (!id) return false;
 
   try {
-    const validatedData = UsernameValidator.parse(username);
+    await UsernameValidator.parseAsync({ username: username.trim() });
 
     await prisma.user.update({
       where: {
         id: id,
       },
       data: {
-        username: validatedData.username,
+        username: username,
       },
     });
     return true;
   } catch (err) {
+    console.log(err);
+
     return false;
   }
 }
