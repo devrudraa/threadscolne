@@ -14,9 +14,8 @@ const Page: FC<pageProps> = async ({ params }) => {
   const session = await getAuthSession();
   if (!params.id || !session) return null;
 
-  const userOnBoarded = await IsUserOnBoarded({ userId: session.user.id });
-
-  if (!userOnBoarded) return redirect("/onboarding");
+  // const userOnBoarded = await IsUserOnBoarded({ userId: session.user.id });
+  // if (!userOnBoarded) return redirect("/onboarding");
 
   const thread = await FetchThreadById(params.id);
   if (!thread) return null;
@@ -33,6 +32,7 @@ const Page: FC<pageProps> = async ({ params }) => {
           author={thread.author}
           createdAt={thread.createdAt}
           comments={thread.children}
+          username={thread.author.username as string}
         />
       </div>
       <div className="mt-7">
@@ -56,6 +56,7 @@ const Page: FC<pageProps> = async ({ params }) => {
               createdAt={childItem.createdAt}
               comments={childItem.children}
               isComment={true}
+              username={childItem.author.username as string}
             />
           );
         })}

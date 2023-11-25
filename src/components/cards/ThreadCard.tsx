@@ -27,6 +27,7 @@ interface ThreadCardProps {
   //     userUserId: string;
   //     threadId: string | null;
   //   })[];
+  username: string;
   comments: any[];
   isComment?: boolean;
 }
@@ -38,6 +39,7 @@ const ThreadCard: FC<ThreadCardProps> = ({
   currentUser,
   id,
   parentId,
+  username,
   isComment,
 }) => {
   return (
@@ -61,10 +63,14 @@ const ThreadCard: FC<ThreadCardProps> = ({
             <div className="thread-card_bar" />
           </div>
           <div className="flex w-full flex-col ">
-            <Link href={`/profile/${author.id}`} className="w-fit">
+            <Link
+              href={`/profile/${author.id}`}
+              className="w-fit flex flex-col"
+            >
               <h4 className="cursor-pointer text-base-semibold text-light-1">
                 {author.name}
               </h4>
+              <label className="text-tiny-medium">@{username}</label>
             </Link>
             <Link href={`/thread/${id}`} className="w-fit">
               <p className="mt-2 text-small-regular text-light-2">{content}</p>

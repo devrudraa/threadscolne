@@ -7,10 +7,10 @@ import { redirect } from "next/navigation";
 export default async function Home() {
   const session = await getAuthSession();
 
-  const userOnBoarded = await IsUserOnBoarded({
-    userId: session?.user?.id as string,
-  });
-  if (!userOnBoarded) return redirect("/onboarding");
+  // const userOnBoarded = await IsUserOnBoarded({
+  //   userId: session?.user?.id as string,
+  // });
+  // if (!userOnBoarded) return redirect("/onboarding");
 
   const Threads = await FetchThreads({ pageNumber: 1, pageSize: 20 });
 
@@ -35,6 +35,7 @@ export default async function Home() {
                   author={threadCard.author}
                   createdAt={threadCard.createdAt}
                   comments={threadCard.children}
+                  username={threadCard.author.username as string}
                 />
               );
             })}

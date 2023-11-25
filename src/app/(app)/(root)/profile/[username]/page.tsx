@@ -1,29 +1,28 @@
-import ProfileHeader from "@/components/shared/ProfileHeader";
-import { GetUserData } from "@/lib/actions/utils.actions";
-import { redirect } from "next/navigation";
 import { FC } from "react";
-
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import Image from "next/image";
 import { profileTabs } from "@/Constants";
-import ThreadsTab from "@/components/shared/ThreadsTab";
+import { redirect } from "next/navigation";
 import getAuthSession from "@/lib/authOptions";
+import ThreadsTab from "@/components/shared/ThreadsTab";
+import { GetUserData } from "@/lib/actions/utils.actions";
+import ProfileHeader from "@/components/shared/ProfileHeader";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 interface pageProps {
-  params: { userId: string };
+  params: { username: string };
 }
 const Page: FC<pageProps> = async ({ params }) => {
   const session = await getAuthSession();
   if (!session) return null;
 
-  const userData = await GetUserData({ userId: params.userId });
+  const userData = await GetUserData({ username: params.username });
   if (!userData) return redirect("/auth/sign-in");
 
   return (
     <section>
       <ProfileHeader
-        accountId={params.userId}
-        authUserId={session.user.id}
+        paramsUserId={userData.id}
+        sessionUserId={session.user.id}
         bio={userData?.bio}
         imageUrl={userData.image}
         name={userData.name}
@@ -58,11 +57,7 @@ const Page: FC<pageProps> = async ({ params }) => {
               className="w-full text-light-1"
             >
               {/* @ts-ignore */}
-              <ThreadsTab
-                currentUserId={session.user.id}
-                accountId={params.userId}
-                accountType="User"
-              />
+              <ThreadsTab currentUserId={session.user.id} id={userData.id} />
             </TabsContent>
           ))}
         </Tabs>

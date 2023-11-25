@@ -1,21 +1,13 @@
 import { fetchUserPosts } from "@/lib/actions/threads.actions";
-import { redirect } from "next/navigation";
 import { FC } from "react";
 import ThreadCard from "../cards/ThreadCard";
 
 interface ThreadsTabProps {
   currentUserId: string;
-  accountId: string;
-  accountType: "User" | "Community";
+  id: string;
 }
-const ThreadsTab: FC<ThreadsTabProps> = async ({
-  accountId,
-  accountType,
-  currentUserId,
-}) => {
-  const userThreads = await fetchUserPosts({ id: accountId });
-
-  if (!userThreads) redirect("/");
+const ThreadsTab: FC<ThreadsTabProps> = async ({ id, currentUserId }) => {
+  const userThreads = await fetchUserPosts({ id: id });
 
   return (
     <section className="mt-9 flex flex-col gap-10">
@@ -30,6 +22,7 @@ const ThreadsTab: FC<ThreadsTabProps> = async ({
             createdAt={thread.createdAt}
             currentUser={currentUserId}
             parentId={thread.parentId}
+            username={thread.author.username as string}
           />
         );
       })}

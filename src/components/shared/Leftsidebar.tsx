@@ -25,13 +25,15 @@ const LeftSidebar = () => {
             pathname === link.route;
 
           if (link.route === "/profile")
-            link.route = `${link.route}/${session?.user.id}`;
+            link.route = `${link.route}/${session?.user.username}`;
 
           return (
             <Link
               href={link.route}
               key={link.label}
-              className={`leftsidebar_link ${isActive && "bg-primary-500 "}`}
+              className={`leftsidebar_link ${
+                isActive ? "bg-primary-500" : "hover:bg-dark-4"
+              }`}
             >
               <Image
                 src={link.imgURL}

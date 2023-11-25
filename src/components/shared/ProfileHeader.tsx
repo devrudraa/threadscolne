@@ -1,17 +1,20 @@
+import { Button } from "@nextui-org/react";
 import Image from "next/image";
 import { FC } from "react";
+import EditProfileModal from "../modal/EditProfile";
+import Link from "next/link";
 
 interface ProfileHeaderProps {
-  accountId: string;
-  authUserId: string;
+  paramsUserId: string;
+  sessionUserId: string;
   name: string;
   username: string;
   imageUrl: string;
   bio: string | null;
 }
 const ProfileHeader: FC<ProfileHeaderProps> = ({
-  accountId,
-  authUserId,
+  paramsUserId,
+  sessionUserId,
   bio,
   imageUrl,
   name,
@@ -19,7 +22,7 @@ const ProfileHeader: FC<ProfileHeaderProps> = ({
 }) => {
   return (
     <div className="flex w-full flex-col justify-start">
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between ">
         <div className="flex items-center gap-3">
           <div className="relative  w-11 h-11 object-cover">
             <Image
@@ -36,6 +39,16 @@ const ProfileHeader: FC<ProfileHeaderProps> = ({
             <p className="text-base-medium text-gray-1">@{username}</p>
           </div>
         </div>
+        {sessionUserId === paramsUserId && (
+          <EditProfileModal
+            id={sessionUserId}
+            bio={bio}
+            image={imageUrl}
+            name={name}
+            username={username}
+          />
+        )}
+        {/* <Link href={"/settings/profile"}>settings</Link> */}
       </div>
       {/* {Todo Community} */}
       <p className="mt-6 max-w-lg text-base-regular text-light-2">{bio}</p>

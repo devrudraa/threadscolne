@@ -1,5 +1,6 @@
 "use server";
 import prisma from "../PrismaClient";
+import getAuthSession from "../authOptions";
 import { UsernameValidator } from "../validators/Username";
 
 export async function DoesUserExist(userId: string): Promise<boolean> {
@@ -48,10 +49,10 @@ export async function GetUserDataFiled({
   return userDataFiled;
 }
 
-export async function GetUserData({ userId }: { userId: string }) {
+export async function GetUserData({ username }: { username: string }) {
   return await prisma.user.findFirst({
     where: {
-      id: userId,
+      username: username,
     },
     include: {
       Thread: {
@@ -64,6 +65,10 @@ export async function GetUserData({ userId }: { userId: string }) {
 }
 
 export async function isUsernameUnique(username: string): Promise<boolean> {
+  const currentSession = await getAuthSession();
+
+  if (username === currentSession?.user.username) return true;
+
   const user = await prisma.user.findFirst({
     where: {
       username: username,

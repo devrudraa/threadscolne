@@ -11,8 +11,8 @@ const page: FC<pageProps> = async ({}) => {
 
   if (!session.user || !session.user.id) return null;
 
-  const userOnBoarded = await IsUserOnBoarded({ userId: session.user.id });
-  if (!userOnBoarded) return redirect("/onboarding");
+  // const userOnBoarded = await IsUserOnBoarded({ userId: session.user.id });
+  // if (!userOnBoarded) return redirect("/onboarding");
 
   return (
     <section>

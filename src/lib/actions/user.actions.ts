@@ -1,5 +1,7 @@
 "use server";
+import { image } from "@nextui-org/react";
 import prisma from "../PrismaClient";
+import { revalidatePath } from "next/cache";
 interface AddUserProps {
   id: string;
   username: string;
@@ -76,5 +78,43 @@ export async function fetchUsers({
     console.log(error);
 
     throw new Error("Error while searching for results!");
+  }
+}
+
+interface updateUserDataProps {
+  id: string;
+  name: string;
+  username: string;
+  bio?: string;
+  path: string;
+  // image?: string;
+}
+export async function updateUserData({
+  id,
+  bio,
+  username,
+  name,
+  path,
+}: // path,
+updateUserDataProps): Promise<boolean> {
+  try {
+    await prisma.user.update({
+      where: {
+        id: id,
+      },
+      data: {
+        name: name,
+        bio: bio,
+        username: username,
+        // image: image,
+      },
+    });
+    revalidatePath(path);
+    return true;
+  } catch (error) {
+    console.log(error);
+
+    throw new Error("Error while searching for results!");
+    return false;
   }
 }

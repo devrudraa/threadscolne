@@ -205,6 +205,7 @@ export async function fetchUserPosts({ id }: fetchUserPostsProps) {
       children: true,
       author: {
         select: {
+          username: true,
           name: true,
           image: true,
           id: true,
