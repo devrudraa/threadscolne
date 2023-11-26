@@ -27,6 +27,7 @@
     "prisma": "^5.5.2",
     "react": "^18",
     "react-dom": "^18",
+    "react-easy-crop": "^5.0.2",
     "react-hook-form": "^7.48.2",
     "shadcn-ui": "^0.4.1",
     "svix": "^1.13.0",

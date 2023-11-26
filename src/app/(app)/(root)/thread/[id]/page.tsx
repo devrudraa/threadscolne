@@ -1,11 +1,8 @@
-import ThreadCardSkeleton from "@/components/Skeleton/ThreadCardSkeleton";
 import ThreadCard from "@/components/cards/ThreadCard";
 import CommentForm from "@/components/forms/Comment";
 import { FetchThreadById } from "@/lib/actions/threads.actions";
-import { IsUserOnBoarded } from "@/lib/actions/utils.actions";
 import getAuthSession from "@/lib/authOptions";
-import { redirect } from "next/navigation";
-import { FC, Suspense } from "react";
+import { FC } from "react";
 
 interface pageProps {
   params: { id: string };
@@ -38,7 +35,7 @@ const Page: FC<pageProps> = async ({ params }) => {
       <div className="mt-7">
         <CommentForm
           threadId={params.id}
-          currentUserImg={session.user.image}
+          currentUserImg={session.user.image as string}
           currentUserId={session.user.id}
         />
       </div>

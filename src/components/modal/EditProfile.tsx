@@ -28,6 +28,7 @@ import Image from "next/image";
 import { useUploadThing } from "@/lib/uploadthing";
 import { updateUserData } from "@/lib/actions/user.actions";
 import { usePathname, useRouter } from "next/navigation";
+import ChooseUploadImage from "../shared/ChooseUploadImage";
 
 interface EditProfileModalProps {
   id: string;
@@ -46,14 +47,11 @@ export default function EditProfileModal({
 }: EditProfileModalProps) {
   const pathname = usePathname();
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
-  const [files, setFiles] = useState<File[]>([]);
-  const { startUpload } = useUploadThing("media");
   const router = useRouter();
 
   const form = useForm<UserType>({
     resolver: zodResolver(UserValidation),
     defaultValues: {
-      image: image || "",
       name: name || "",
       username: username || "",
       bio: bio || "",
@@ -62,14 +60,6 @@ export default function EditProfileModal({
 
   // 2. Define a.name
   async function onSubmit(values: UserType) {
-    // const blob = values.image;
-    // const hasImageChanged = isBase64Image(blob!);
-    // if (hasImageChanged) {
-    //   const imgRes = await startUpload(files);
-    //   if (imgRes && imgRes[0].url) {
-    //     values.image = imgRes[0].url;
-    //   }
-    // }
     const response = await updateUserData({
       id: id,
       name: values.name,
@@ -80,7 +70,6 @@ export default function EditProfileModal({
 
     if (response) {
       router.refresh();
-      console.log("done");
     }
   }
 
@@ -93,7 +82,6 @@ export default function EditProfileModal({
         scrollBehavior="inside"
         isOpen={isOpen}
         onOpenChange={onOpenChange}
-        placement="top-center"
       >
         <ModalContent>
           {(onClose) => (
@@ -102,53 +90,13 @@ export default function EditProfileModal({
                 Edit Profile
               </ModalHeader>
               <ModalBody className="mb-10">
+                <ChooseUploadImage id={id} image={image} />
+
                 <Form {...form}>
                   <form
                     onSubmit={form.handleSubmit(onSubmit)}
                     className="flex flex-col justify-start gap-10"
                   >
-                    <FormField
-                      control={form.control}
-                      name="image"
-                      render={({ field }) => (
-                        <FormItem className="flex items-center gap-4">
-                          <FormLabel className="account-form_image-label">
-                            {field.value ? (
-                              <Image
-                                src={field.value}
-                                alt="profile_icon"
-                                width={96}
-                                height={96}
-                                priority
-                                className="rounded-full object-contain"
-                              />
-                            ) : (
-                              <Image
-                                src="/assets/profile.svg"
-                                alt="profile_icon"
-                                width={24}
-                                height={24}
-                                className="object-contain"
-                              />
-                            )}
-                          </FormLabel>
-                          <FormControl className="flex-1 text-base-semibold text-gray-200">
-                            <Input
-                              size="sm"
-                              type="file"
-                              accept="image/*"
-                              placeholder="Add profile photo"
-                              className="account-form_image-input"
-                              // onChange={(e) => {
-                              //   handleFileUpload(e, field.onChange, setFiles);
-                              //   console.log(field);
-                              // }}
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
                     <FormField
                       control={form.control}
                       name="name"

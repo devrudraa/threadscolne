@@ -41,3 +41,34 @@ export function formatThreadCount(count: number): string {
     return `${threadCount} ${threadWord}`;
   }
 }
+
+interface dataURLtoFileProps {
+  dataUrl: string;
+  filename?: string;
+  mimeType?: string;
+}
+export function dataURLtoFile({
+  dataUrl,
+  filename = "unnamed.webp",
+  mimeType = "image/webp",
+}: dataURLtoFileProps) {
+  // Extract base64 data
+  const base64Data = dataUrl.split(",")[1];
+
+  // Convert base64 to binary buffer
+  const binaryData = atob(base64Data);
+
+  // Create a Uint8Array to hold binary data
+  const byteArray = new Uint8Array(binaryData.length);
+  for (let i = 0; i < binaryData.length; i++) {
+    byteArray[i] = binaryData.charCodeAt(i);
+  }
+
+  // Create a Blob from the binary data
+  const blob = new Blob([byteArray], { type: mimeType });
+
+  // Create a File from the Blob
+  const file = new File([blob], filename, { type: mimeType });
+
+  return file;
+}

@@ -114,7 +114,7 @@ updateUserDataProps): Promise<boolean> {
   } catch (error) {
     console.log(error);
 
-    throw new Error("Error while searching for results!");
+    // throw new Error("Error while searching for results!");
     return false;
   }
 }
