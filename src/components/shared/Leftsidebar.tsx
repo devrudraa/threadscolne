@@ -12,9 +12,9 @@ const LeftSidebar = () => {
   // const { userId } = useAuth();
   const { status, data: session } = useSession();
 
-  if (status === "loading") {
-    return <p>loading</p>;
-  }
+  // if (status === "loading") {
+  //   return <p>loading</p>;
+  // }
 
   return (
     <section className="custom-scrollbar leftsidebar">
@@ -24,7 +24,7 @@ const LeftSidebar = () => {
             (pathname.includes(link.route) && link.route.length > 1) ||
             pathname === link.route;
 
-          if (link.route === "/profile")
+          if (link.route === "/profile" && status != "loading")
             link.route = `${link.route}/${session?.user.username}`;
 
           return (

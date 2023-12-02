@@ -9,7 +9,6 @@ import {
 } from "@nextui-org/react";
 import { signIn } from "next-auth/react";
 import { BuiltInProviderType } from "next-auth/providers/index";
-import { redirect } from "next/navigation";
 
 interface pageProps {}
 const page: FC<pageProps> = ({}) => {

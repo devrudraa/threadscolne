@@ -15,11 +15,11 @@ import { Textarea } from "../ui/textarea";
 import { ThreadType, ThreadValidation } from "@/lib/validators/Thread";
 import { CreateThread } from "@/lib/actions/threads.actions";
 import { usePathname, useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
 
-interface PostThreadProps {
-  userId: string;
-}
-const PostThread: FC<PostThreadProps> = ({ userId }) => {
+interface PostThreadProps {}
+const PostThread: FC<PostThreadProps> = () => {
+  const { data, status } = useSession();
   const pathname = usePathname();
   const router = useRouter();
 
@@ -30,16 +30,18 @@ const PostThread: FC<PostThreadProps> = ({ userId }) => {
       thread: "",
     },
   });
+  if (status === "unauthenticated") return null;
 
   // 2. Define a.name
   async function onSubmit(values: ThreadType) {
-    await CreateThread({
-      authorId: userId,
-      path: pathname,
-      text: values.thread,
-    });
-
-    router.push("/");
+    if (status !== "loading" && data) {
+      await CreateThread({
+        authorId: data.user.id,
+        path: pathname,
+        text: values.thread,
+      });
+      router.push("/");
+    }
   }
 
   return (
@@ -64,7 +66,11 @@ const PostThread: FC<PostThreadProps> = ({ userId }) => {
           )}
         />
 
-        <Button type="submit" className="bg-primary-500">
+        <Button
+          disabled={status === "loading"}
+          type="submit"
+          className="bg-primary-500"
+        >
           Submit
         </Button>
       </form>
