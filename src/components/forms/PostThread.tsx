@@ -1,8 +1,8 @@
 "use client";
-import { FC } from "react";
+import { FC, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Button } from "@/components/ui/button";
+
 import {
   Form,
   FormControl,
@@ -16,10 +16,12 @@ import { ThreadType, ThreadValidation } from "@/lib/validators/Thread";
 import { CreateThread } from "@/lib/actions/threads.actions";
 import { usePathname, useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
+import { Button } from "@nextui-org/react";
 
 interface PostThreadProps {}
 const PostThread: FC<PostThreadProps> = () => {
   const { data, status } = useSession();
+  const [isSubmitting, SetIsSubmitting] = useState<boolean>(false);
   const pathname = usePathname();
   const router = useRouter();
 
@@ -35,12 +37,14 @@ const PostThread: FC<PostThreadProps> = () => {
   // 2. Define a.name
   async function onSubmit(values: ThreadType) {
     if (status !== "loading" && data) {
+      SetIsSubmitting(true);
       await CreateThread({
         authorId: data.user.id,
         path: pathname,
         text: values.thread,
       });
       router.push("/");
+      SetIsSubmitting(false);
     }
   }
 
@@ -67,7 +71,8 @@ const PostThread: FC<PostThreadProps> = () => {
         />
 
         <Button
-          disabled={status === "loading"}
+          isLoading={isSubmitting}
+          disabled={status === "loading" || isSubmitting}
           type="submit"
           className="bg-primary-500"
         >
