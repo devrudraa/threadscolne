@@ -1,4 +1,4 @@
-import { FC } from "react";
+import { FC, Suspense } from "react";
 import Image from "next/image";
 import { profileTabs } from "@/Constants";
 import { redirect } from "next/navigation";
@@ -7,6 +7,7 @@ import ThreadsTab from "@/components/shared/ThreadsTab";
 import { GetUserData } from "@/lib/actions/utils.actions";
 import ProfileHeader from "@/components/shared/ProfileHeader";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import ThreadCardSkeleton from "@/components/Skeleton/ThreadCardSkeleton";
 
 interface pageProps {
   params: { username: string };
@@ -56,8 +57,16 @@ const Page: FC<pageProps> = async ({ params }) => {
               value={tab.value}
               className="w-full text-light-1"
             >
-              {/* @ts-ignore */}
-              <ThreadsTab currentUserId={session.user.id} id={userData.id} />
+              {tab.value === "tagged" ? (
+                <p>tagged threads</p>
+              ) : (
+                <Suspense fallback={<ThreadCardSkeleton noOfCards={5} />}>
+                  <ThreadsTab
+                    currentUserId={session.user.id}
+                    id={userData.id}
+                  />
+                </Suspense>
+              )}
             </TabsContent>
           ))}
         </Tabs>

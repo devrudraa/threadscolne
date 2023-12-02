@@ -1,4 +1,5 @@
 import { Button } from "@nextui-org/react";
+import { signOut } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
 import React from "react";
@@ -18,7 +19,18 @@ const TopBar = () => {
 
       <div className="flex items-center gap-1">
         <div className="block md:hidden">
-          <Button>Sign in sign out</Button>
+          {/* <Button>Sign in sign out</Button> */}
+          <Button onClick={async () => await signOut()}>
+            <div className="flex cursor-pointer gap-4 p-4 items-center">
+              <p className="text-light-2 max-lg:hidden">Logout</p>
+              <Image
+                src="/assets/logout.svg"
+                alt="logout"
+                width={24}
+                height={24}
+              />
+            </div>
+          </Button>
           {/* <SignedIn>
             <SignOutButton>
               <div className="flex cursor-pointer">
@@ -41,7 +53,7 @@ const TopBar = () => {
             },
           }}
         /> */}
-        <Button>Organization switch</Button>
+        {/* <Button>Organization switch</Button> */}
       </div>
     </nav>
   );

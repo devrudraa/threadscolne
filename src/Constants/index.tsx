@@ -9,21 +9,21 @@ export const sidebarLinks = [
     route: "/search",
     label: "Search",
   },
-  {
-    imgURL: "/assets/heart.svg",
-    route: "/activity",
-    label: "Activity",
-  },
+  // {
+  //   imgURL: "/assets/heart.svg",
+  //   route: "/activity",
+  //   label: "Activity",
+  // },
   {
     imgURL: "/assets/create.svg",
     route: "/create-thread",
     label: "Create Thread",
   },
-  {
-    imgURL: "/assets/community.svg",
-    route: "/communities",
-    label: "Communities",
-  },
+  // {
+  //   imgURL: "/assets/community.svg",
+  //   route: "/communities",
+  //   label: "Communities",
+  // },
   {
     imgURL: "/assets/user.svg",
     route: "/profile",
@@ -31,7 +31,15 @@ export const sidebarLinks = [
   },
 ];
 
-export const profileTabs = [
+interface ProfileTab {
+  value: "threads" | "replies" | "tagged";
+  label: "Threads" | "Replies" | "Tagged";
+  icon: string;
+}
+
+interface ProfileTabsProps extends Array<ProfileTab> {}
+
+export const profileTabs: ProfileTabsProps = [
   { value: "threads", label: "Threads", icon: "/assets/reply.svg" },
   { value: "replies", label: "Replies", icon: "/assets/members.svg" },
   { value: "tagged", label: "Tagged", icon: "/assets/tag.svg" },

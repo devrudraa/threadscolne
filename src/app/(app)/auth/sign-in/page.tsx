@@ -1,65 +1,93 @@
 "use client";
-import { FC } from "react";
-import {
-  Modal,
-  ModalContent,
-  ModalHeader,
-  ModalBody,
-  Button,
-} from "@nextui-org/react";
+import { FC, useState } from "react";
+import { Button, Divider } from "@nextui-org/react";
 import { signIn } from "next-auth/react";
 import { BuiltInProviderType } from "next-auth/providers/index";
-import { redirect } from "next/navigation";
 
 interface pageProps {}
-const page: FC<pageProps> = ({}) => {
+const Page: FC<pageProps> = ({}) => {
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   async function signInUser(provider: BuiltInProviderType) {
+    setIsLoading(true);
     await signIn(provider, {
       redirect: false,
     });
+    setIsLoading(false);
     // redirect("/");
   }
 
   return (
-    <Modal isOpen={true}>
-      <ModalContent>
-        <ModalHeader className="flex flex-col gap-1">
-          Sign In
-          <span className="text-small-semibold text-light-2">
-            to continue on this platform
-          </span>
-        </ModalHeader>
-        <ModalBody className="mb-10">
-          <Button
-            onClick={() => signInUser("google")}
-            className="gsi-material-button"
-          >
-            <div className="gsi-material-button-state"></div>
-            <div className="gsi-material-button-content-wrapper">
-              <div className="gsi-material-button-icon">{Icons.Google}</div>
-              <span className="gsi-material-button-contents text-heading4-medium">
-                Continue with Google
-              </span>
+    <>
+      <main className="grid place-items-center max-w-[100vw] min-h-[100vh] px-5 md:px-0 ">
+        <main className="flex md:space-x-5 rounded-xl bg-stone-800 z-10 ">
+          <section className="p-6 md:block hidden">
+            {/* <ShieldImageLogin /> */}
+            {/* <Image
+              src={"/sign-in_mobile_mockup.png"}
+              width={250}
+              height={250}
+              alt="sign-in_mobile_mockup"
+            /> */}
+          </section>
+
+          <section className="bg-stone-900 px-5 py-8 md:-translate-y-3 md:translate-x-3 rounded-xl shadow-md shadow-black drop-shadow-2xl space-y-5">
+            <div className="w-[8rem] h-[8rem] mx-auto">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                alt="Profile Picture"
+                className="rounded-md w-[8rem] mx-auto"
+                src={`https://api.dicebear.com/6.x/adventurer-neutral/svg?seed=${Math.random()}`}
+              />
             </div>
-          </Button>
-          <Button
-            onClick={() => signInUser("github")}
-            className="gsi-material-button"
-          >
-            <div className="gsi-material-button-state"></div>
-            <div className="gsi-material-button-content-wrapper">
-              <div className="gsi-material-button-icon">{Icons.GutHub}</div>
-              <span className="gsi-material-button-contents text-heading4-medium">
-                Continue with GitHub
-              </span>
-            </div>
-          </Button>
-        </ModalBody>
-      </ModalContent>
-    </Modal>
+
+            <section className="space-y-5 max-w-[19rem]">
+              <h1 className="head-text tracking-wider">Sign In</h1>
+              <label className="text-small-regular" htmlFor="heading">
+                Sign in to continue to the site.
+              </label>
+              <Divider />
+              <div className="space-y-2">
+                <Button
+                  isDisabled={isLoading}
+                  isLoading={isLoading}
+                  onClick={() => signInUser("google")}
+                  className="gsi-material-button"
+                >
+                  <div className="gsi-material-button-state"></div>
+                  <div className="gsi-material-button-content-wrapper">
+                    <div className="gsi-material-button-icon">
+                      {Icons.Google}
+                    </div>
+                    <span className="gsi-material-button-contents text-heading4-medium">
+                      Continue with Google
+                    </span>
+                  </div>
+                </Button>
+                <Button
+                  isDisabled={isLoading}
+                  isLoading={isLoading}
+                  onClick={() => signInUser("github")}
+                  className="gsi-material-button"
+                >
+                  <div className="gsi-material-button-state"></div>
+                  <div className="gsi-material-button-content-wrapper">
+                    <div className="gsi-material-button-icon">
+                      {Icons.GutHub}
+                    </div>
+                    <span className="gsi-material-button-contents text-heading4-medium">
+                      Continue with GitHub
+                    </span>
+                  </div>
+                </Button>
+              </div>
+            </section>
+          </section>
+        </main>
+      </main>
+    </>
   );
 };
-export default page;
+export default Page;
 
 const size = 24;
 const Icons = {
