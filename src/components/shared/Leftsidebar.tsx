@@ -51,7 +51,7 @@ const LeftSidebar = () => {
 
       <div className="mt-10 px-6">
         {/* <p>sign in and out</p> */}
-        <Button onClick={async () => await signOut()}>
+        <Button onClick={() => signOut()}>
           <div className="flex cursor-pointer gap-4 p-4 items-center">
             <p className="text-light-2 max-lg:hidden">Logout</p>
             <Image

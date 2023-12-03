@@ -29,31 +29,33 @@ const ChooseUsernameForm: FC<ChooseUsernameProps> = ({}) => {
     },
   });
 
-  if (status === "loading") {
-    return <p>loading...</p>;
-  }
+  // if (status === "loading") {
+  //   return <p>loading...</p>;
+  // }
 
   if (data?.user.username) {
     router.replace("/");
   }
 
   async function checkUsername(e: UsernameType) {
-    setIsCheckingUsername(true);
+    if (status !== "loading") {
+      setIsCheckingUsername(true);
 
-    const response = await setUserUsername({
-      id: data?.user.id,
-      username: e.username,
-    });
-    console.log("responce", response);
+      const response = await setUserUsername({
+        id: data?.user.id,
+        username: e.username,
+      });
+      // console.log("response", response);
 
-    if (response) router.replace("/");
+      if (response) router.replace("/");
 
-    // Todo: Show a toast that the username didn't change because of some error
-    setIsCheckingUsername(false);
+      // Todo: Show a toast that the username didn't change because of some error
+      setIsCheckingUsername(false);
+    }
   }
 
   return (
-    <div className="min-w-[375px]">
+    <div className="">
       <Form {...form}>
         <form onSubmit={form.handleSubmit(checkUsername)} className="space-y-8">
           <FormField
@@ -62,7 +64,12 @@ const ChooseUsernameForm: FC<ChooseUsernameProps> = ({}) => {
             render={({ field }) => (
               <FormItem>
                 <FormControl>
-                  <Input autoComplete="off" label="Username" {...field} />
+                  <Input
+                    size="sm"
+                    autoComplete="off"
+                    label="Username"
+                    {...field}
+                  />
                 </FormControl>
                 <FormDescription>This is your unique name.</FormDescription>
                 <FormMessage />
@@ -72,7 +79,7 @@ const ChooseUsernameForm: FC<ChooseUsernameProps> = ({}) => {
           <Button
             color="success"
             type="submit"
-            disabled={isCheckingUsername}
+            disabled={isCheckingUsername || status === "loading"}
             isLoading={isCheckingUsername}
           >
             Submit
