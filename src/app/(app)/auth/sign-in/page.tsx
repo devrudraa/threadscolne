@@ -30,7 +30,7 @@ const Page: FC<pageProps> = ({}) => {
             /> */}
           </section>
 
-          <section className="bg-stone-900 px-5 py-8 md:-translate-y-3 md:translate-x-3 rounded-xl shadow-md shadow-black drop-shadow-2xl space-y-5">
+          <section className="bg-dark-4 px-5 py-8 md:-translate-y-3 md:translate-x-3 rounded-xl shadow-md shadow-black drop-shadow-2xl space-y-5">
             <div className="w-[8rem] h-[8rem] mx-auto">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img

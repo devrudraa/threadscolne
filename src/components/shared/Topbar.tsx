@@ -1,3 +1,4 @@
+"use client";
 import { Button } from "@nextui-org/react";
 import { signOut } from "next-auth/react";
 import Image from "next/image";
@@ -20,7 +21,7 @@ const TopBar = () => {
       <div className="flex items-center gap-1">
         <div className="block md:hidden">
           {/* <Button>Sign in sign out</Button> */}
-          <Button onClick={async () => await signOut()}>
+          <Button onClick={() => signOut()}>
             <div className="flex cursor-pointer gap-4 p-4 items-center">
               <p className="text-light-2 max-lg:hidden">Logout</p>
               <Image
