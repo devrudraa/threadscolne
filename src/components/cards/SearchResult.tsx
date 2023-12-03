@@ -13,14 +13,9 @@ interface SearchResultProps {
   imgUrl: string;
   personType: string;
 }
-const SearchResult: FC<SearchResultProps> = ({
-  id,
-  imgUrl,
-  name,
-  username,
-}) => {
+const SearchResult: FC<SearchResultProps> = ({ imgUrl, name, username }) => {
   return (
-    <Link href={"profile/" + id}>
+    <Link href={"profile/" + username}>
       <article className="user-card px-5 py-3 bg-dark-3 rounded-lg">
         <div className="user-card_avatar">
           <div className="relative h-12 w-12">

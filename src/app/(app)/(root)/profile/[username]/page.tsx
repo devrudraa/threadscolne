@@ -17,9 +17,9 @@ const Page: FC<pageProps> = async ({ params }) => {
   if (!session) return null;
 
   const userData = await GetUserData({ username: params.username });
-  if (!userData) return redirect("/auth/sign-in");
+  // if (!userData) return redirect("/auth/sign-in");
 
-  return (
+  return userData ? (
     <section>
       <ProfileHeader
         paramsUserId={userData.id}
@@ -72,6 +72,8 @@ const Page: FC<pageProps> = async ({ params }) => {
         </Tabs>
       </div>
     </section>
+  ) : (
+    <p className="no-result">User not found</p>
   );
 };
 export default Page;
