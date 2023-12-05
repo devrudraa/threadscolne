@@ -51,11 +51,13 @@ export async function fetchUsers({
             {
               username: {
                 contains: searchString,
+                mode: "insensitive",
               },
             },
             {
               name: {
                 contains: searchString,
+                mode: "insensitive",
               },
             },
           ],

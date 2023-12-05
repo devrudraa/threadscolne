@@ -11,11 +11,13 @@ const TopBar = () => {
       <Link href={"/"} className="flex items-center gap-4">
         <Image
           src={"/assets/logo.svg"}
-          height={29}
-          width={28}
+          height={35}
+          width={35}
           alt="Logo Image"
         />
-        <p className="text-heading3-bold text-light-1 max-xs:hidden">Threads</p>
+        <p className="text-heading3-bold text-light-1 max-xs:hidden">
+          Code Flow
+        </p>
       </Link>
 
       <div className="flex items-center gap-1">
