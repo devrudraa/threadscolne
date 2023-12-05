@@ -1,10 +1,10 @@
 import ThreadCard from "@/components/cards/ThreadCard";
 import { FetchThreads } from "@/lib/actions/threads.actions";
-import getAuthSession from "@/lib/authOptions";
+// import getAuthSession from "@/lib/authOptions";
 
 export default async function Home() {
-  const session = await getAuthSession();
-  if (!session) return null;
+  // const session = await getAuthSession();
+  // if (!session) return null;
   // const userOnBoarded = await IsUserOnBoarded({
   //   userId: session?.user?.id as string,
   // });
@@ -25,7 +25,7 @@ export default async function Home() {
                 <ThreadCard
                   key={threadCard.id}
                   id={threadCard.id}
-                  currentUser={session?.user.id!}
+                  // currentUser={session?.user.id!}
                   parentId={threadCard?.parentId}
                   content={threadCard.text}
                   author={threadCard.author}

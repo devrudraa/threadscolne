@@ -1,7 +1,6 @@
 import { FC, Suspense } from "react";
 import Image from "next/image";
 import { profileTabs } from "@/Constants";
-import { redirect } from "next/navigation";
 import getAuthSession from "@/lib/authOptions";
 import ThreadsTab from "@/components/shared/ThreadsTab";
 import { GetUserData } from "@/lib/actions/utils.actions";

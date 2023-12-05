@@ -202,7 +202,15 @@ export async function fetchUserPosts({ id }: fetchUserPostsProps) {
       },
     },
     include: {
-      children: true,
+      children: {
+        include: {
+          author: {
+            select: {
+              image: true,
+            },
+          },
+        },
+      },
       author: {
         select: {
           username: true,
