@@ -1,10 +1,10 @@
+import { formatTimeAgo } from "@/lib/utils";
 import Image from "next/image";
 import Link from "next/link";
 import { FC } from "react";
 
 interface ThreadCardProps {
   id: string;
-  currentUser: string;
   parentId: string | null;
   content: string;
   author: {
@@ -14,21 +14,12 @@ interface ThreadCardProps {
     username?: string | null;
   };
   createdAt: Date;
-  //   comments: {
-  //     author: {
-  //       profile_photo: true;
-  //     };
-  //   }[];
-  //   comments: ({ author: { profile_photo: string } } & {
-  //     id: string;
-  //     text: string;
-  //     createdAt: Date;
-  //     parentId: string | null;
-  //     userUserId: string;
-  //     threadId: string | null;
-  //   })[];
   username: string;
-  comments: any[];
+  comments: {
+    author: {
+      image: string;
+    };
+  }[];
   isComment?: boolean;
 }
 const ThreadCard: FC<ThreadCardProps> = ({
@@ -36,7 +27,6 @@ const ThreadCard: FC<ThreadCardProps> = ({
   comments,
   content,
   createdAt,
-  currentUser,
   id,
   parentId,
   username,
@@ -51,7 +41,10 @@ const ThreadCard: FC<ThreadCardProps> = ({
       <div className="flex items-start justify-between">
         <div className="flex w-full flex-1 flex-row gap-4">
           <div className="flex flex-col items-center">
-            <Link href={`/profile/${author.id}`} className="relative h-11 w-11">
+            <Link
+              href={`/profile/${author.username}`}
+              className="relative h-11 w-11"
+            >
               <Image
                 src={author.image}
                 alt="Profile Image"
@@ -64,12 +57,18 @@ const ThreadCard: FC<ThreadCardProps> = ({
           </div>
           <div className="flex w-full flex-col ">
             <Link
-              href={`/profile/${author.id}`}
+              href={`/profile/${author.username}`}
               className="w-fit flex flex-col"
             >
-              <h4 className="cursor-pointer text-base-semibold text-light-1">
-                {author.name}
-              </h4>
+              <div className="flex gap-1 items-center">
+                <h4 className="cursor-pointer text-base-semibold text-light-1">
+                  {author.name}
+                </h4>
+                <span className="mb-2">.</span>
+                <p className="text-subtle-medium text-light-4">
+                  {formatTimeAgo(createdAt)}
+                </p>
+              </div>
               <label className="text-tiny-medium">@{username}</label>
             </Link>
             <Link href={`/thread/${id}`} className="w-fit">
@@ -118,6 +117,28 @@ const ThreadCard: FC<ThreadCardProps> = ({
           </div>
         </div>
       </div>
+
+      {/* //* Adding the image of the person who replied */}
+      {!isComment && comments.length > 0 && (
+        <div className="ml-1 mt-3 flex items-center gap-2">
+          {comments.slice(0, 2).map((comment, index) => (
+            <Image
+              key={index}
+              src={comment.author.image}
+              alt={`user_${index}`}
+              width={24}
+              height={24}
+              className={`${index !== 0 && "-ml-5"} rounded-full object-cover`}
+            />
+          ))}
+
+          <Link href={`/thread/${id}`}>
+            <p className="mt-1 text-subtle-medium text-gray-1">
+              {comments.length} repl{comments.length > 1 ? "ies" : "y"}
+            </p>
+          </Link>
+        </div>
+      )}
     </article>
   );
 };
