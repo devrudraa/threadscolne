@@ -13,7 +13,7 @@ export default async function RootLayout({
   const session = await getAuthSession();
 
   if (!session) redirect("/auth/sign-in");
-  if (!session.user.username) redirect("/username");
+  if (!session.user.username) redirect("/auth/username");
   return (
     <>
       <TopBar />

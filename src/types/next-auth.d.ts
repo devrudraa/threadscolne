@@ -18,3 +18,6 @@ declare module "next-auth" {
     };
   }
 }
+
+//! This type is directly taken from next-auth source code
+type UpdateSession = (data?: any) => Promise<Session | null>;
