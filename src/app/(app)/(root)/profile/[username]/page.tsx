@@ -59,7 +59,7 @@ const Page: FC<pageProps> = async ({ params }) => {
               {tab.value === "tagged" ? (
                 <p>tagged threads</p>
               ) : (
-                <Suspense fallback={<ThreadCardSkeleton noOfCards={5} />}>
+                <Suspense fallback={<ThreadCardSkeleton />}>
                   <ThreadsTab
                     currentUserId={session.user.id}
                     id={userData.id}

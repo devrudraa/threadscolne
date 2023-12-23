@@ -200,20 +200,12 @@ interface fetchUserPostsProps {
 export async function fetchUserPosts({ id }: fetchUserPostsProps) {
   const userThread = prisma.thread.findMany({
     where: {
+      parentId: null,
       author: {
         id: id,
       },
     },
     include: {
-      children: {
-        include: {
-          author: {
-            select: {
-              image: true,
-            },
-          },
-        },
-      },
       author: {
         select: {
           username: true,

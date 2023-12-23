@@ -18,7 +18,7 @@ interface ThreadCardProps {
   };
   createdAt: Date;
   username: string;
-  comments: {
+  comments?: {
     author: {
       image: string;
     };
@@ -135,7 +135,7 @@ const ThreadCard: FC<ThreadCardProps> = ({
                 />
               </div>
 
-              {isComment && comments.length > 0 && (
+              {comments && isComment && comments.length > 0 && (
                 <p className="mt-1 text-subtle-medium text-gray-1">
                   {comments.length} Replies{" "}
                 </p>
@@ -146,7 +146,7 @@ const ThreadCard: FC<ThreadCardProps> = ({
       </div>
 
       {/* //* Adding the image of the person who replied */}
-      {!isComment && comments.length > 0 && (
+      {!isComment && comments && comments.length > 0 && (
         <div className="ml-1 mt-3 flex items-center gap-2">
           {comments.slice(0, 2).map((comment, index) => (
             <Image
