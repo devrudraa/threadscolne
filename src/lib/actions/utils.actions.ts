@@ -56,6 +56,9 @@ export async function GetUserData({ username }: { username: string }) {
     },
     include: {
       Thread: {
+        where: {
+          parentId: null,
+        },
         select: {
           _count: true,
         },

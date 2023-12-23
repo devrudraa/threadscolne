@@ -1,26 +1,29 @@
 "use client";
 import { FC, useState } from "react";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-
+import dynamic from "next/dynamic";
+const TipTap = dynamic(() => import("../Editor/TipTap"), {
+  ssr: false,
+  loading: () => <p>Loading...</p>,
+});
 import {
   Form,
   FormControl,
   FormField,
   FormItem,
-  FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { Textarea } from "../ui/textarea";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { ThreadType, ThreadValidation } from "@/lib/validators/Thread";
-import { CreateThread } from "@/lib/actions/threads.actions";
-import { usePathname, useRouter } from "next/navigation";
-import { useSession } from "next-auth/react";
 import { Button } from "@nextui-org/react";
+import { usePathname } from "next/navigation";
+import { useRouter } from "next/navigation";
+import { AddThread } from "@/lib/actions/threads.actions";
 
-interface PostThreadProps {}
-const PostThread: FC<PostThreadProps> = () => {
-  const { data, status } = useSession();
+interface CreateThreadProps {
+  authorId: string;
+}
+const CreateThread: FC<CreateThreadProps> = ({ authorId }) => {
   const [isSubmitting, SetIsSubmitting] = useState<boolean>(false);
   const pathname = usePathname();
   const router = useRouter();
@@ -32,22 +35,23 @@ const PostThread: FC<PostThreadProps> = () => {
       thread: "",
     },
   });
-  if (status === "unauthenticated") return null;
 
-  // 2. Define a.name
   async function onSubmit(values: ThreadType) {
-    if (status !== "loading" && data) {
-      SetIsSubmitting(true);
-      await CreateThread({
-        authorId: data.user.id,
+    SetIsSubmitting(true);
+    try {
+      await AddThread({
+        authorId: authorId,
         path: pathname,
         text: values.thread,
+      }).then(() => {
+        router.push("/");
+        SetIsSubmitting(false);
       });
-      router.push("/");
+    } catch (error) {
+      window.alert("Something went wrong!!");
       SetIsSubmitting(false);
     }
   }
-
   return (
     <Form {...form}>
       <form
@@ -59,11 +63,8 @@ const PostThread: FC<PostThreadProps> = () => {
           name="thread"
           render={({ field }) => (
             <FormItem className="flex flex-col w-full gap-3">
-              <FormLabel className="text-base-semibold text-light-2">
-                Content
-              </FormLabel>
-              <FormControl className="no-focus border border-dark-4 bg-dark-3 text-light-1  ">
-                <Textarea rows={15} {...field} />
+              <FormControl className="no-focus border border-dark-4 bg-dark-3 text-light-1">
+                <TipTap description={field.name} onChange={field.onChange} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -72,7 +73,7 @@ const PostThread: FC<PostThreadProps> = () => {
 
         <Button
           isLoading={isSubmitting}
-          disabled={status === "loading" || isSubmitting}
+          disabled={isSubmitting}
           type="submit"
           className="bg-primary-500"
         >
@@ -82,4 +83,4 @@ const PostThread: FC<PostThreadProps> = () => {
     </Form>
   );
 };
-export default PostThread;
+export default CreateThread;

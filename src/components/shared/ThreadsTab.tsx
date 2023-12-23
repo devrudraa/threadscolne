@@ -20,12 +20,12 @@ const ThreadsTab: FC<ThreadsTabProps> = async ({ id, currentUserId }) => {
               key={thread.id}
               id={thread.id}
               author={thread.author}
-              comments={thread.children}
               content={thread.text}
               createdAt={thread.createdAt}
               // currentUser={currentUserId}
               parentId={thread.parentId}
               username={thread.author.username as string}
+              isDedicatedPage={false}
             />
           </>
         );

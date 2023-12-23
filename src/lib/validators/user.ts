@@ -16,7 +16,7 @@ export const UserValidation = z.object({
     .refine(isUsernameUnique, {
       message: "Username is already taken",
     }),
-  bio: z.string().max(1000, { message: "Maximum 1000 characters." }).optional(),
+  bio: z.string().max(30, { message: "Maximum 30 characters." }).optional(),
 });
 
 export type UserType = z.infer<typeof UserValidation>;

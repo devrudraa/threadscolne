@@ -1,5 +1,5 @@
 import ThreadCard from "@/components/cards/ThreadCard";
-import { FetchThreads } from "@/lib/actions/threads.actions";
+import { FetchThreadByPagination } from "@/lib/actions/threads.actions";
 // import getAuthSession from "@/lib/authOptions";
 
 export default async function Home() {
@@ -10,7 +10,10 @@ export default async function Home() {
   // });
   // if (!userOnBoarded) return redirect("/onboarding");
 
-  const Threads = await FetchThreads({ pageNumber: 1, pageSize: 20 });
+  const Threads = await FetchThreadByPagination({
+    pageNumber: 1,
+    pageSize: 20,
+  });
 
   return (
     <section>
@@ -32,6 +35,7 @@ export default async function Home() {
                   createdAt={threadCard.createdAt}
                   comments={threadCard.children}
                   username={threadCard.author.username as string}
+                  isDedicatedPage={false}
                 />
               );
             })}
