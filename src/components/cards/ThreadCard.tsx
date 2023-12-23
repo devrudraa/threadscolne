@@ -1,7 +1,10 @@
+"use client";
 import { formatTimeAgo } from "@/lib/utils";
 import Image from "next/image";
 import Link from "next/link";
 import { FC } from "react";
+import "@/styles/tiptap.css";
+import { useRouter } from "next/navigation";
 
 interface ThreadCardProps {
   id: string;
@@ -21,6 +24,7 @@ interface ThreadCardProps {
     };
   }[];
   isComment?: boolean;
+  isDedicatedPage: boolean;
 }
 const ThreadCard: FC<ThreadCardProps> = ({
   author,
@@ -31,7 +35,10 @@ const ThreadCard: FC<ThreadCardProps> = ({
   parentId,
   username,
   isComment,
+  isDedicatedPage,
 }) => {
+  const router = useRouter();
+
   return (
     <article
       className={`mt-10 flex w-full flex-col rounded-xl  ${
@@ -71,9 +78,29 @@ const ThreadCard: FC<ThreadCardProps> = ({
               </div>
               <label className="text-tiny-medium">@{username}</label>
             </Link>
-            <Link href={`/thread/${id}`} className="w-fit">
-              <p className="mt-2 text-small-regular text-light-2">{content}</p>
-            </Link>
+            {/* <Link href={`/thread/${id}`} className="w-fit"> */}
+            <section
+              onClick={() => !isDedicatedPage && router.push(`/thread/${id}`)}
+              className={`mt-2 text-small-regular text-light-2 tiptap ${
+                !isDedicatedPage && "cursor-pointer"
+              }`}
+            >
+              <div
+                className="space-y-3"
+                dangerouslySetInnerHTML={{
+                  __html: !isDedicatedPage ? content.slice(0, 100) : content,
+                }}
+              ></div>
+              {content.length > 100 && !isDedicatedPage && (
+                <Link
+                  href={`/thread/${id}`}
+                  className="text-primary-500 cursor-pointer"
+                >
+                  ...read more
+                </Link>
+              )}
+            </section>
+            {/* </Link> */}
             <div className="mt-5 flex flex-col gap-3">
               <div className="flex gap-3.5">
                 <Image

@@ -5,13 +5,11 @@ import prisma from "../PrismaClient";
 interface ThreadsParams {
   text: string;
   authorId: string;
-  communityId?: string;
   path: string;
 }
 
-export async function CreateThread({
+export async function AddThread({
   authorId,
-  communityId,
   text,
   path,
 }: ThreadsParams): Promise<void> {
@@ -35,13 +33,13 @@ export async function CreateThread({
 }
 
 //* ---------------------------------------------------------------FetchThreads()------------------------------------------------
-
+// This is used on the home page where you have to display only a number of threads
 interface FetchThreadsProps {
   pageNumber: number;
   pageSize: number;
 }
 
-export async function FetchThreads({
+export async function FetchThreadByPagination({
   pageNumber,
   pageSize,
 }: FetchThreadsProps) {
@@ -92,6 +90,8 @@ export async function FetchThreads({
 }
 
 //* ---------------------------------------------------------------FetchThreadById()------------------------------------------------
+// This is used on the dedicated thread page where you have to give all the info of one thread
+
 export async function FetchThreadById(threadId: string) {
   return await prisma.thread.findFirst({
     where: {
@@ -107,6 +107,9 @@ export async function FetchThreadById(threadId: string) {
         },
       },
       children: {
+        orderBy: {
+          createdAt: "desc",
+        },
         include: {
           author: {
             select: {

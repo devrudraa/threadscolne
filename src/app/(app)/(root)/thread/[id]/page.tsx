@@ -30,6 +30,7 @@ const Page: FC<pageProps> = async ({ params }) => {
           createdAt={thread.createdAt}
           comments={thread.children}
           username={thread.author.username as string}
+          isDedicatedPage={true}
         />
       </div>
       <div className="mt-7">
@@ -54,6 +55,7 @@ const Page: FC<pageProps> = async ({ params }) => {
               comments={childItem.children}
               isComment={true}
               username={childItem.author.username as string}
+              isDedicatedPage={true}
             />
           );
         })}
