@@ -20,7 +20,7 @@ export default async function RootLayout({
       <main className="flex flex-row">
         <LeftSideBar />
         <section className="main-container">
-          <div className="w-full max-w-4xl">{children}</div>
+          <div className="w-full sm:max-w-4xl">{children}</div>
         </section>
         {/* <RightSideBar /> */}
       </main>

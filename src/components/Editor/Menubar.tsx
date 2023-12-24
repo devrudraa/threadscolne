@@ -23,56 +23,56 @@ const Menubar: FC<MenubarProps> = ({ editor }) => {
 
   const MenuBarTools = [
     {
-      function: editor.chain().focus().toggleBold(),
+      function: editor.chain().toggleBold(),
       name: "bold",
       icon: <Bold />,
     },
     {
-      function: editor.chain().focus().toggleItalic(),
+      function: editor.chain().toggleItalic(),
       name: "italic",
       icon: <Italic />,
     },
     {
-      function: editor.chain().focus().toggleStrike(),
+      function: editor.chain().toggleStrike(),
       name: "strike",
       icon: <Strikethrough />,
     },
     {
-      function: editor.chain().focus().toggleBulletList(),
+      function: editor.chain().toggleBulletList(),
       name: "bulletList",
       icon: <List />,
     },
     {
-      function: editor.chain().focus().toggleOrderedList(),
+      function: editor.chain().toggleOrderedList(),
       name: "orderedList",
       icon: <ListOrdered />,
     },
     {
-      function: editor.chain().focus().toggleCodeBlock(),
+      function: editor.chain().toggleCodeBlock(),
       name: "codeBlock",
       icon: <Code />,
     },
     {
-      function: editor.chain().focus().toggleBlockquote(),
+      function: editor.chain().toggleBlockquote(),
       name: "blockquote",
       icon: <Quote />,
     },
     // {
-    //   function: editor.chain().focus().toggleBlockquote(),
+    //   function: editor.chain().toggleBlockquote(),
     //   name: "blockquote",
     //   icon: <ImagePlus />,
     // },
   ];
 
   return (
-    <div className="flex gap-2 px-2 py-3 bg-dark-3 rounded-lg mb-1 mt-5 flex-wrap">
+    <div className="flex gap-2 flex-wrap px-2 py-3 bg-dark-3 ">
       {MenuBarTools.map((item, i) => {
         return (
           <Toggle
             pressed={editor.isActive(item.name)}
             variant={"outline"}
             key={i}
-            onClick={() => item.function.run()}
+            onClick={() => item.function.focus().run()}
             // disabled={!item.function}
             // className={ ? "is-active" : ""}
           >
@@ -87,14 +87,14 @@ const Menubar: FC<MenubarProps> = ({ editor }) => {
   //     <section className="flex gap-2">
   //       <Toggle
   //         variant="outline"
-  //         onClick={() => editor.chain().focus().setParagraph()}
+  //         onClick={() => editor.chain().setParagraph()}
   //         className={editor.isActive("paragraph") ? "is-active" : ""}
   //       >
   //         paragraph
   //       </Toggle>
   //       <Toggle
   //         variant="outline"
-  //         onClick={() => editor.chain().focus().toggleBlockquote()}
+  //         onClick={() => editor.chain().toggleBlockquote()}
   //         className={editor.isActive("blockquote") ? "is-active" : ""}
   //       >
   //         <Quote />

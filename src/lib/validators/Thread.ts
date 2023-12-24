@@ -1,7 +1,16 @@
+import { maxLengthForThread } from "@/Constants";
 import * as z from "zod";
+import { stripHtmlTags } from "../utils";
 
 export const ThreadValidation = z.object({
-  thread: z.string().min(1, { message: "Thread can't be empty" }).max(280),
+  thread: z
+    .string()
+    .refine((value) => stripHtmlTags(value).length >= 3, {
+      message: "Thread must have at least 3 characters",
+    })
+    .refine((value) => stripHtmlTags(value).length <= maxLengthForThread, {
+      message: `Thread can't exceed ${maxLengthForThread} characters`,
+    }),
   accountId: z.string(),
 });
 

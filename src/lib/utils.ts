@@ -92,3 +92,7 @@ export function dataURLtoFile({
 
   return file;
 }
+
+export function stripHtmlTags(input: string): string {
+  return input.replace(/<[^>]*>/g, "");
+}

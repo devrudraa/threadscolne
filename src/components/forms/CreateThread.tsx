@@ -38,6 +38,15 @@ const CreateThread: FC<CreateThreadProps> = ({ authorId }) => {
 
   async function onSubmit(values: ThreadType) {
     SetIsSubmitting(true);
+    console.log(values.thread.length);
+    console.log(values.thread);
+    if (values.thread.length <= 0) {
+      form.setError("thread", { message: "Thread can't be empty!" });
+      SetIsSubmitting(false);
+      window.alert("Something went wrong!!");
+      return;
+    }
+
     try {
       await AddThread({
         authorId: authorId,
@@ -52,6 +61,7 @@ const CreateThread: FC<CreateThreadProps> = ({ authorId }) => {
       SetIsSubmitting(false);
     }
   }
+
   return (
     <Form {...form}>
       <form
