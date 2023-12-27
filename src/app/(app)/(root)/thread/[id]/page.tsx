@@ -1,4 +1,5 @@
-import ThreadCard from "@/components/cards/ThreadCard";
+import dynamic from "next/dynamic";
+const ThreadCard = dynamic(() => import("@/components/cards/ThreadCard"));
 import CommentForm from "@/components/forms/Comment";
 import { FetchThreadById } from "@/lib/actions/threads.actions";
 import getAuthSession from "@/lib/authOptions";

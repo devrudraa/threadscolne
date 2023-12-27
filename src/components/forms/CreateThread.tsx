@@ -74,7 +74,7 @@ const CreateThread: FC<CreateThreadProps> = ({ authorId }) => {
           render={({ field }) => (
             <FormItem className="flex flex-col w-full gap-3">
               <FormControl className="no-focus border border-dark-4 bg-dark-3 text-light-1">
-                <TipTap description={field.name} onChange={field.onChange} />
+                <TipTap onChange={field.onChange} />
               </FormControl>
               <FormMessage />
             </FormItem>

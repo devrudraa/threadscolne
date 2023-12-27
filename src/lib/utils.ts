@@ -96,3 +96,11 @@ export function dataURLtoFile({
 export function stripHtmlTags(input: string): string {
   return input.replace(/<[^>]*>/g, "");
 }
+
+export function stripEmptyHtmlTags(input: string): string {
+  // Define the regular expression pattern to match any element with no content
+  const regex = /<(\w+)(?:\s+[^>]*)?><\/\1>/g;
+  // Replace occurrences of <element></element> with an empty string
+  return input.replace(regex, "").trim();
+  // Pass the filtered content to the onChange function
+}

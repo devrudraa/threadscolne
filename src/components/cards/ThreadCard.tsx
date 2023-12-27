@@ -2,9 +2,11 @@
 import { formatTimeAgo } from "@/lib/utils";
 import Image from "next/image";
 import Link from "next/link";
-import { FC } from "react";
+import { FC, useMemo } from "react";
 import "@/styles/tiptap.css";
 import { useRouter } from "next/navigation";
+import StarterKit from "@tiptap/starter-kit";
+import { EditorContent, useEditor } from "@tiptap/react";
 
 interface ThreadCardProps {
   id: string;
@@ -38,6 +40,22 @@ const ThreadCard: FC<ThreadCardProps> = ({
   isDedicatedPage,
 }) => {
   const router = useRouter();
+
+  const extensions = useMemo(() => [StarterKit], []);
+  const editorProps = useMemo(
+    () => ({
+      attributes: {
+        spellcheck: "true",
+      },
+    }),
+    []
+  );
+  const editor = useEditor({
+    extensions,
+    editorProps,
+    editable: false,
+    content: content,
+  });
 
   return (
     <article
@@ -85,18 +103,17 @@ const ThreadCard: FC<ThreadCardProps> = ({
                 !isDedicatedPage && "cursor-pointer"
               }`}
             >
-              <div
-                className="space-y-3"
-                dangerouslySetInnerHTML={{
-                  __html: !isDedicatedPage ? content.slice(0, 100) : content,
-                }}
-              ></div>
+              <EditorContent editor={editor} />
+
               {content.length > 100 && !isDedicatedPage && (
-                <Link
-                  href={`/thread/${id}`}
-                  className="text-primary-500 cursor-pointer"
-                >
-                  ...read more
+                <Link href={`/thread/${id}`} className="text-primary-500">
+                  ...
+                  <label
+                    htmlFor="link"
+                    className="hover:underline cursor-pointer"
+                  >
+                    read more
+                  </label>
                 </Link>
               )}
             </section>

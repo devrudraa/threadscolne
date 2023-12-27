@@ -1,14 +1,15 @@
-.ProseMirror {
-  @apply custom-scrollbar;
-  /* margin-top: 0.75em; */
-  max-height: 30rem;
-  min-height: 20rem;
-  max-width: 100%;
-  padding: 10px;
-  overflow-y: scroll;
-  outline: none;
+.editor {
+  .ProseMirror {
+    @apply custom-scrollbar;
+    /* margin-top: 0.75em; */
+    max-height: 30rem;
+    min-height: 20rem;
+    max-width: 100%;
+    padding: 10px;
+    overflow-y: scroll;
+    outline: none;
+  }
 }
-
 .tiptap {
   ol {
     padding: 0 1rem;

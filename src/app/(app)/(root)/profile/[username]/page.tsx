@@ -50,24 +50,24 @@ const Page: FC<pageProps> = async ({ params }) => {
               </TabsTrigger>
             ))}
           </TabsList>
-          {profileTabs.map((tab) => (
-            <TabsContent
-              key={`content-${tab.label}`}
-              value={tab.value}
-              className="w-full text-light-1"
-            >
-              {tab.value === "tagged" ? (
-                <p>tagged threads</p>
-              ) : (
-                <Suspense fallback={<ThreadCardSkeleton />}>
+          <Suspense fallback={<ThreadCardSkeleton />}>
+            {profileTabs.map((tab) => (
+              <TabsContent
+                key={`content-${tab.label}`}
+                value={tab.value}
+                className="w-full text-light-1"
+              >
+                {tab.value === "tagged" ? (
+                  <p>tagged threads</p>
+                ) : (
                   <ThreadsTab
                     currentUserId={session.user.id}
                     id={userData.id}
                   />
-                </Suspense>
-              )}
-            </TabsContent>
-          ))}
+                )}
+              </TabsContent>
+            ))}
+          </Suspense>
         </Tabs>
       </div>
     </section>
