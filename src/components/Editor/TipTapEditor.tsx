@@ -2,7 +2,6 @@ import { FC, memo, useMemo, useRef, useState } from "react";
 import { useEditor, EditorContent } from "@tiptap/react";
 import Typography from "@tiptap/extension-typography";
 import StarterKit from "@tiptap/starter-kit";
-import { Image as TipTapImage } from "@tiptap/extension-image";
 import Menubar from "./Menubar";
 import "@/styles/tiptap.css";
 import { maxLengthForThread } from "@/Constants";
@@ -22,19 +21,7 @@ const TipTapEditor: FC<TipTapEditorProps> = ({ onChange }) => {
   const [textLength, setTextLength] = useState<number>(0);
   const imageUrl = useSelector((state: RootState) => state.src);
 
-  const extensions = useMemo(
-    () => [
-      StarterKit,
-      Typography,
-      TipTapImage.configure({
-        allowBase64: true,
-        HTMLAttributes: {
-          class: "text-editor-image",
-        },
-      }),
-    ],
-    []
-  );
+  const extensions = useMemo(() => [StarterKit, Typography], []);
 
   const editorProps = useMemo(
     () => ({
