@@ -1,4 +1,11 @@
 {
-  "cSpell.words": ["hookform", "tiptap", "topbar", "uploadthing"],
+  "cSpell.words": [
+    "Dismissable",
+    "hookform",
+    "reduxjs",
+    "tiptap",
+    "topbar",
+    "uploadthing"
+  ],
   "cSpell.language": "en,lorem,en-US"
 }

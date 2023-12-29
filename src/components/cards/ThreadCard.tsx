@@ -1,6 +1,6 @@
 "use client";
 import { formatTimeAgo } from "@/lib/utils";
-import Image from "next/image";
+import { Image } from "@nextui-org/react";
 import Link from "next/link";
 import { FC, useMemo } from "react";
 import "@/styles/tiptap.css";
@@ -27,6 +27,8 @@ interface ThreadCardProps {
   }[];
   isComment?: boolean;
   isDedicatedPage: boolean;
+  image: string | null;
+  imageDesc: string | null;
 }
 const ThreadCard: FC<ThreadCardProps> = ({
   author,
@@ -37,6 +39,8 @@ const ThreadCard: FC<ThreadCardProps> = ({
   parentId,
   username,
   isComment,
+  image,
+  imageDesc = "",
   isDedicatedPage,
 }) => {
   const router = useRouter();
@@ -73,7 +77,6 @@ const ThreadCard: FC<ThreadCardProps> = ({
               <Image
                 src={author.image}
                 alt="Profile Image"
-                fill
                 className="cursor-pointer rounded-full"
               />
             </Link>
@@ -115,6 +118,15 @@ const ThreadCard: FC<ThreadCardProps> = ({
                     read more
                   </label>
                 </Link>
+              )}
+              {image && (
+                <Image
+                  src={image}
+                  width={400}
+                  className="rounded-lg mx-auto mt-5 mb-5"
+                  height={400}
+                  alt={imageDesc ? imageDesc : ""}
+                />
               )}
             </section>
             {/* </Link> */}

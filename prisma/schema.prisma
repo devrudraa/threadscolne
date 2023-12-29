@@ -24,12 +24,13 @@ model User {
 }
 
 model Thread {
-  id        String   @id @default(uuid())
-  text      String
-  createdAt DateTime @default(now())
-  parentId  String?
-
-  author     User   @relation(fields: [userUserId], references: [id])
+  id         String   @id @default(uuid())
+  text       String
+  createdAt  DateTime @default(now())
+  parentId   String?
+  image      String?
+  imageDesc  String?
+  author     User     @relation(fields: [userUserId], references: [id])
   userUserId String
 
   children Thread[] @relation("ThreadToChildren")

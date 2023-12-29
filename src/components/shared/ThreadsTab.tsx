@@ -19,6 +19,8 @@ const ThreadsTab: FC<ThreadsTabProps> = async ({ id, currentUserId }) => {
             <Divider />
             <ThreadCard
               key={thread.id}
+              image={thread.image}
+              imageDesc={thread.imageDesc}
               id={thread.id}
               author={thread.author}
               content={thread.text}

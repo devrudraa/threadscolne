@@ -25,6 +25,8 @@ const Page: FC<pageProps> = async ({ params }) => {
           key={thread.id}
           id={thread.id}
           // currentUser={thread.id}
+          image={thread.image}
+          imageDesc={thread.imageDesc}
           parentId={thread?.parentId}
           content={thread.text}
           author={thread.author}
@@ -48,7 +50,8 @@ const Page: FC<pageProps> = async ({ params }) => {
             <ThreadCard
               key={childItem.id}
               id={childItem.id}
-              // currentUser={childItem.id}
+              image={thread.image}
+              imageDesc={thread.imageDesc}
               parentId={childItem?.parentId}
               content={childItem.text}
               author={childItem.author}

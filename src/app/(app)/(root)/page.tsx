@@ -30,6 +30,8 @@ export default async function Home() {
                   key={threadCard.id}
                   id={threadCard.id}
                   // currentUser={session?.user.id!}
+                  image={threadCard.image}
+                  imageDesc={threadCard.imageDesc}
                   parentId={threadCard?.parentId}
                   content={threadCard.text}
                   author={threadCard.author}

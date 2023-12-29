@@ -1,22 +1,30 @@
+"use client";
 import type { Editor } from "@tiptap/react";
-import { FC } from "react";
+import { FC, useRef } from "react";
+import type { ChangeEvent } from "react";
 import {
   Bold,
   Code,
-  ImagePlus,
+  ImagePlusIcon,
   Italic,
-  Key,
   List,
   ListOrdered,
   Quote,
   Strikethrough,
 } from "lucide-react";
 import { Toggle } from "../ui/toggle";
+import { useDispatch, useSelector } from "react-redux";
+import { updateImgSrc } from "@/lib/Store/features/textEditor/editorSlice";
+import { RootState } from "@/lib/Store/Store";
 
 interface MenubarProps {
   editor: Editor | null;
 }
 const Menubar: FC<MenubarProps> = ({ editor }) => {
+  const imageInpRef = useRef<HTMLInputElement | null>(null);
+  const dispatch = useDispatch();
+  const imageSrc = useSelector((state: RootState) => state.src);
+
   if (!editor) {
     return null;
   }
@@ -64,6 +72,25 @@ const Menubar: FC<MenubarProps> = ({ editor }) => {
     // },
   ];
 
+  function handleFileSelect(e: ChangeEvent<HTMLInputElement>) {
+    e.preventDefault();
+    if (e.target.files && e.target.files.length > 0) {
+      const file = e.target.files[0];
+      if (!file.type.includes("image")) {
+        // Todo: Add Toast error notification
+        console.error("please select image only");
+        return;
+      }
+
+      const fileReader = new FileReader();
+      fileReader.onload = async (event) => {
+        const imageDataUrl = event.target?.result?.toString() || "";
+        dispatch(updateImgSrc(imageDataUrl));
+      };
+      fileReader.readAsDataURL(file);
+    }
+  }
+
   return (
     <div className="flex gap-2 flex-wrap px-2 py-3 bg-dark-3 ">
       {MenuBarTools.map((item, i) => {
@@ -80,26 +107,28 @@ const Menubar: FC<MenubarProps> = ({ editor }) => {
           </Toggle>
         );
       })}
+      <input
+        ref={imageInpRef}
+        type="file"
+        accept="image/*"
+        hidden
+        onChange={handleFileSelect}
+      />
+      <Toggle
+        pressed={false}
+        variant={"outline"}
+        onClick={() => {
+          if (imageInpRef.current) {
+            imageInpRef.current.click();
+          }
+        }}
+        disabled={!!imageSrc}
+        type="button"
+      >
+        <ImagePlusIcon />
+      </Toggle>
+      {/* <Input> */}
     </div>
   );
-
-  //   return (
-  //     <section className="flex gap-2">
-  //       <Toggle
-  //         variant="outline"
-  //         onClick={() => editor.chain().setParagraph()}
-  //         className={editor.isActive("paragraph") ? "is-active" : ""}
-  //       >
-  //         paragraph
-  //       </Toggle>
-  //       <Toggle
-  //         variant="outline"
-  //         onClick={() => editor.chain().toggleBlockquote()}
-  //         className={editor.isActive("blockquote") ? "is-active" : ""}
-  //       >
-  //         <Quote />
-  //       </Toggle>
-  //     </section>
-  //   );
 };
 export default Menubar;

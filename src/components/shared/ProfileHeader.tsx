@@ -1,8 +1,6 @@
-import { Button } from "@nextui-org/react";
 import Image from "next/image";
 import { FC } from "react";
 import EditProfileModal from "../modal/EditProfile";
-import Link from "next/link";
 
 interface ProfileHeaderProps {
   paramsUserId: string;
