@@ -1,11 +1,30 @@
-.ProseMirror {
-  margin-top: 0.75em;
-  max-height: 30rem;
-  min-height: 20rem;
-  padding: 10px;
-  border-radius: 0.5rem;
-  border: 1px solid #fff;
-  overflow-y: scroll;
+.editor {
+  .ProseMirror::-webkit-scrollbar {
+    width: 3px;
+    height: 3px;
+    border-radius: 2px;
+  }
+
+  .ProseMirror::-webkit-scrollbar-track {
+    background: #09090a;
+  }
+
+  .ProseMirror::-webkit-scrollbar-thumb {
+    background: #5c5c7b;
+    border-radius: 50px;
+  }
+
+  .ProseMirror::-webkit-scrollbar-thumb:hover {
+    background: #7878a3;
+  }
+  .ProseMirror {
+    max-height: 30rem;
+    min-height: 10rem;
+    max-width: 100%;
+    padding: 10px;
+    overflow-y: scroll;
+    outline: none;
+  }
 }
 .tiptap {
   ol {

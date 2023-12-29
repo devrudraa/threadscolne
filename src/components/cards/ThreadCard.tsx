@@ -1,10 +1,12 @@
 "use client";
 import { formatTimeAgo } from "@/lib/utils";
-import Image from "next/image";
+import { Image } from "@nextui-org/react";
 import Link from "next/link";
-import { FC } from "react";
+import { FC, useMemo } from "react";
 import "@/styles/tiptap.css";
 import { useRouter } from "next/navigation";
+import StarterKit from "@tiptap/starter-kit";
+import { EditorContent, useEditor } from "@tiptap/react";
 
 interface ThreadCardProps {
   id: string;
@@ -25,6 +27,8 @@ interface ThreadCardProps {
   }[];
   isComment?: boolean;
   isDedicatedPage: boolean;
+  image: string | null;
+  imageDesc: string | null;
 }
 const ThreadCard: FC<ThreadCardProps> = ({
   author,
@@ -35,9 +39,27 @@ const ThreadCard: FC<ThreadCardProps> = ({
   parentId,
   username,
   isComment,
+  image,
+  imageDesc = "",
   isDedicatedPage,
 }) => {
   const router = useRouter();
+
+  const extensions = useMemo(() => [StarterKit], []);
+  const editorProps = useMemo(
+    () => ({
+      attributes: {
+        spellcheck: "true",
+      },
+    }),
+    []
+  );
+  const editor = useEditor({
+    extensions,
+    editorProps,
+    editable: false,
+    content: content,
+  });
 
   return (
     <article
@@ -55,7 +77,6 @@ const ThreadCard: FC<ThreadCardProps> = ({
               <Image
                 src={author.image}
                 alt="Profile Image"
-                fill
                 className="cursor-pointer rounded-full"
               />
             </Link>
@@ -85,19 +106,27 @@ const ThreadCard: FC<ThreadCardProps> = ({
                 !isDedicatedPage && "cursor-pointer"
               }`}
             >
-              <div
-                className="space-y-3"
-                dangerouslySetInnerHTML={{
-                  __html: !isDedicatedPage ? content.slice(0, 100) : content,
-                }}
-              ></div>
+              <EditorContent editor={editor} />
+
               {content.length > 100 && !isDedicatedPage && (
-                <Link
-                  href={`/thread/${id}`}
-                  className="text-primary-500 cursor-pointer"
-                >
-                  ...read more
+                <Link href={`/thread/${id}`} className="text-primary-500">
+                  ...
+                  <label
+                    htmlFor="link"
+                    className="hover:underline cursor-pointer"
+                  >
+                    read more
+                  </label>
                 </Link>
+              )}
+              {image && (
+                <Image
+                  src={image}
+                  width={400}
+                  className="rounded-lg mx-auto mt-5 mb-5"
+                  height={400}
+                  alt={imageDesc ? imageDesc : ""}
+                />
               )}
             </section>
             {/* </Link> */}

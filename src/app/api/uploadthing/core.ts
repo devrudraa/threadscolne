@@ -11,7 +11,7 @@ const getUser = async () => await getAuthSession();
 
 export const ourFileRouter = {
   // Define as many FileRoutes as you like, each with a unique routeSlug
-  uploadProfilePic: f({ image: { maxFileSize: "2MB", maxFileCount: 1 } })
+  uploadImage: f({ image: { maxFileSize: "2MB", maxFileCount: 1 } })
     // Set permissions and file types for this FileRoute
     .middleware(async (req) => {
       const session = await getUser();

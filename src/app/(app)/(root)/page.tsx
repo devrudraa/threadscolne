@@ -1,4 +1,5 @@
-import ThreadCard from "@/components/cards/ThreadCard";
+import dynamic from "next/dynamic";
+const ThreadCard = dynamic(() => import("@/components/cards/ThreadCard"));
 import { FetchThreadByPagination } from "@/lib/actions/threads.actions";
 // import getAuthSession from "@/lib/authOptions";
 
@@ -29,6 +30,8 @@ export default async function Home() {
                   key={threadCard.id}
                   id={threadCard.id}
                   // currentUser={session?.user.id!}
+                  image={threadCard.image}
+                  imageDesc={threadCard.imageDesc}
                   parentId={threadCard?.parentId}
                   content={threadCard.text}
                   author={threadCard.author}

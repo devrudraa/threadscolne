@@ -1,6 +1,7 @@
 import { fetchUserPosts } from "@/lib/actions/threads.actions";
 import { FC } from "react";
-import ThreadCard from "../cards/ThreadCard";
+import dynamic from "next/dynamic";
+const ThreadCard = dynamic(() => import("@/components/cards/ThreadCard"));
 import { Divider } from "@nextui-org/react";
 
 interface ThreadsTabProps {
@@ -18,6 +19,8 @@ const ThreadsTab: FC<ThreadsTabProps> = async ({ id, currentUserId }) => {
             <Divider />
             <ThreadCard
               key={thread.id}
+              image={thread.image}
+              imageDesc={thread.imageDesc}
               id={thread.id}
               author={thread.author}
               content={thread.text}

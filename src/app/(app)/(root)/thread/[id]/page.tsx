@@ -1,4 +1,5 @@
-import ThreadCard from "@/components/cards/ThreadCard";
+import dynamic from "next/dynamic";
+const ThreadCard = dynamic(() => import("@/components/cards/ThreadCard"));
 import CommentForm from "@/components/forms/Comment";
 import { FetchThreadById } from "@/lib/actions/threads.actions";
 import getAuthSession from "@/lib/authOptions";
@@ -24,6 +25,8 @@ const Page: FC<pageProps> = async ({ params }) => {
           key={thread.id}
           id={thread.id}
           // currentUser={thread.id}
+          image={thread.image}
+          imageDesc={thread.imageDesc}
           parentId={thread?.parentId}
           content={thread.text}
           author={thread.author}
@@ -47,7 +50,8 @@ const Page: FC<pageProps> = async ({ params }) => {
             <ThreadCard
               key={childItem.id}
               id={childItem.id}
-              // currentUser={childItem.id}
+              image={thread.image}
+              imageDesc={thread.imageDesc}
               parentId={childItem?.parentId}
               content={childItem.text}
               author={childItem.author}

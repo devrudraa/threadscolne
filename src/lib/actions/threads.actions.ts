@@ -1,21 +1,31 @@
 "use server";
 import { revalidatePath } from "next/cache";
 import prisma from "../PrismaClient";
+import { useSelector } from "react-redux";
+import { RootState } from "../Store/Store";
+import { dataURLtoFile, isBase64Image } from "../utils";
+import { useUploadThing } from "../uploadthing";
 
 interface ThreadsParams {
   text: string;
   authorId: string;
   path: string;
+  image?: string;
+  desc?: string;
 }
 
 export async function AddThread({
   authorId,
   text,
   path,
-}: ThreadsParams): Promise<void> {
+  desc,
+  image,
+}: ThreadsParams): Promise<boolean> {
   const createdThread = await prisma.thread.create({
     data: {
       text: text,
+      image: image,
+      imageDesc: desc,
       author: {
         connect: { id: authorId },
       },
@@ -30,6 +40,7 @@ export async function AddThread({
   });
 
   revalidatePath(path);
+  return true;
 }
 
 //* ---------------------------------------------------------------FetchThreads()------------------------------------------------
@@ -204,6 +215,9 @@ export async function fetchUserPosts({ id }: fetchUserPostsProps) {
       author: {
         id: id,
       },
+    },
+    orderBy: {
+      createdAt: "desc",
     },
     include: {
       author: {
