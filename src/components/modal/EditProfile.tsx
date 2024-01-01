@@ -9,8 +9,8 @@ import {
   useDisclosure,
   Input,
   Textarea,
+  Skeleton,
 } from "@nextui-org/react";
-import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { UserType, UserValidation } from "@/lib/validators/user";
@@ -24,11 +24,15 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 
-import Image from "next/image";
-import { useUploadThing } from "@/lib/uploadthing";
 import { updateUserData } from "@/lib/actions/user.actions";
 import { usePathname, useRouter } from "next/navigation";
-import ChooseUploadImage from "../shared/ChooseUploadImage";
+import dynamic from "next/dynamic";
+
+const ChooseUploadImage = dynamic(() => import("../shared/ChooseUploadImage"), {
+  loading: () => (
+    <Skeleton className="w-10 h-10 rounded-full aspect-square  mx-auto" />
+  ),
+});
 
 interface EditProfileModalProps {
   id: string;

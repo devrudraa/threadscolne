@@ -1,12 +1,12 @@
-import { FC } from "react";
+import { FC, Suspense } from "react";
 import Image from "next/image";
 import { profileTabs } from "@/Constants";
-import { redirect } from "next/navigation";
 import getAuthSession from "@/lib/authOptions";
 import ThreadsTab from "@/components/shared/ThreadsTab";
 import { GetUserData } from "@/lib/actions/utils.actions";
 import ProfileHeader from "@/components/shared/ProfileHeader";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import ThreadCardSkeleton from "@/components/Skeleton/ThreadCardSkeleton";
 
 interface pageProps {
   params: { username: string };
@@ -16,9 +16,9 @@ const Page: FC<pageProps> = async ({ params }) => {
   if (!session) return null;
 
   const userData = await GetUserData({ username: params.username });
-  if (!userData) return redirect("/auth/sign-in");
+  // if (!userData) return redirect("/auth/sign-in");
 
-  return (
+  return userData ? (
     <section>
       <ProfileHeader
         paramsUserId={userData.id}
@@ -50,19 +50,29 @@ const Page: FC<pageProps> = async ({ params }) => {
               </TabsTrigger>
             ))}
           </TabsList>
-          {profileTabs.map((tab) => (
-            <TabsContent
-              key={`content-${tab.label}`}
-              value={tab.value}
-              className="w-full text-light-1"
-            >
-              {/* @ts-ignore */}
-              <ThreadsTab currentUserId={session.user.id} id={userData.id} />
-            </TabsContent>
-          ))}
+          <Suspense fallback={<ThreadCardSkeleton />}>
+            {profileTabs.map((tab) => (
+              <TabsContent
+                key={`content-${tab.label}`}
+                value={tab.value}
+                className="w-full text-light-1"
+              >
+                {tab.value === "tagged" ? (
+                  <p>tagged threads</p>
+                ) : (
+                  <ThreadsTab
+                    currentUserId={session.user.id}
+                    id={userData.id}
+                  />
+                )}
+              </TabsContent>
+            ))}
+          </Suspense>
         </Tabs>
       </div>
     </section>
+  ) : (
+    <p className="no-result">User not found</p>
   );
 };
 export default Page;

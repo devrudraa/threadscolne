@@ -1,26 +1,24 @@
 import { FC } from "react";
 import { fetchUsers } from "@/lib/actions/user.actions";
-import getAuthSession from "@/lib/authOptions";
 import SearchBar from "@/components/shared/SearchBar";
 import SearchResult from "@/components/cards/SearchResult";
 
 interface pageProps {
   searchParams: { q: string; page?: number };
 }
-const Page: FC<pageProps> = async ({ searchParams }) => {
-  const session = await getAuthSession();
-  if (!session) return null;
 
-  const searchResult = await fetchUsers({
-    searchString: searchParams.q ? searchParams.q : "",
-    pageNumber: searchParams?.page ? +searchParams.page : 1,
-    pageSize: 25,
-  });
+const Page: FC<pageProps> = async ({ searchParams }) => {
+  const searchResult = searchParams.q
+    ? await fetchUsers({
+        searchString: searchParams.q ? searchParams.q : "",
+        pageNumber: searchParams?.page ? +searchParams.page : 1,
+        pageSize: 25,
+      })
+    : undefined;
 
   return (
     <section>
       <h1 className="head-text mb-10">Search</h1>
-
       <SearchBar />
       <div className="mt-14 flex flex-col gap-9">
         {searchResult?.searchResult.length === 0 ? (

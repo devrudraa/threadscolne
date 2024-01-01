@@ -3,7 +3,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { sidebarLinks } from "@/Constants";
-import { useSession } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
+import { Button } from "@nextui-org/react";
 
 const LeftSidebar = () => {
   const router = useRouter();
@@ -12,9 +13,9 @@ const LeftSidebar = () => {
   // const { userId } = useAuth();
   const { status, data: session } = useSession();
 
-  if (status === "loading") {
-    return <p>loading</p>;
-  }
+  // if (status === "loading") {
+  //   return <p>loading</p>;
+  // }
 
   return (
     <section className="custom-scrollbar leftsidebar">
@@ -24,7 +25,7 @@ const LeftSidebar = () => {
             (pathname.includes(link.route) && link.route.length > 1) ||
             pathname === link.route;
 
-          if (link.route === "/profile")
+          if (link.route === "/profile" && status != "loading")
             link.route = `${link.route}/${session?.user.username}`;
 
           return (
@@ -49,19 +50,20 @@ const LeftSidebar = () => {
       </div>
 
       <div className="mt-10 px-6">
-        <p>sign in and out</p>
+        {/* <p>sign in and out</p> */}
+        <Button onClick={() => signOut()}>
+          <div className="flex cursor-pointer gap-4 p-4 items-center">
+            <p className="text-light-2 max-lg:hidden">Logout</p>
+            <Image
+              src="/assets/logout.svg"
+              alt="logout"
+              width={24}
+              height={24}
+            />
+          </div>
+        </Button>
         {/* <SignedIn> */}
         {/* <SignOutButton signOutCallback={() => router.push("/sign-in")}>
-            <div className="flex cursor-pointer gap-4 p-4">
-              <Image
-                src="/assets/logout.svg"
-                alt="logout"
-                width={24}
-                height={24}
-              />
-
-              <p className="text-light-2 max-lg:hidden">Logout</p>
-            </div>
           </SignOutButton> */}
         {/* </SignedIn> */}
       </div>

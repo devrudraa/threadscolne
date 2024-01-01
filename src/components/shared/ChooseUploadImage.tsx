@@ -13,10 +13,7 @@ import {
 import Image from "next/image";
 import { ChangeEvent, FC, useRef } from "react";
 import Cropper, { Area } from "react-easy-crop";
-import {
-  deleteFile,
-  uploadUserProfilePic,
-} from "@/lib/actions/uploadthing.action";
+import { uploadUserProfilePic } from "@/lib/actions/uploadthing.action";
 import { useUploadThing } from "@/lib/uploadthing";
 import { dataURLtoFile } from "@/lib/utils";
 import { useRouter } from "next/navigation";
@@ -34,14 +31,19 @@ const ChooseUploadImage: FC<ChooseUploadImageProps> = ({ image, id }) => {
   const [crop, setCrop] = useState({ x: 0, y: 0 });
   const [zoom, setZoom] = useState(1);
   const [croppedImage, setCroppedImage] = useState<string | null>(null);
-  const { startUpload } = useUploadThing("uploadProfilePic");
+  const { startUpload } = useUploadThing("uploadImage");
 
   function handleFileSelect(e: ChangeEvent<HTMLInputElement>) {
     e.preventDefault();
     const fileReader = new FileReader();
     if (e.target.files && e.target.files.length > 0) {
       const file = e.target.files[0];
-      if (!file.type.includes("image")) return;
+      if (!file.type.includes("image")) {
+        // Todo: Add Toast error notification
+        console.log("please select image only");
+        return;
+      }
+
       fileReader.onload = async (event) => {
         const imageDataUrl = event.target?.result?.toString() || "";
         setImageSrc(imageDataUrl);
@@ -97,7 +99,7 @@ const ChooseUploadImage: FC<ChooseUploadImageProps> = ({ image, id }) => {
     if (!croppedImage) return;
 
     setIsImageUploading(true);
-    const fileToUpload = dataURLtoFile({
+    const fileToUpload = await dataURLtoFile({
       dataUrl: croppedImage,
       filename: `${id}.webp`,
     });

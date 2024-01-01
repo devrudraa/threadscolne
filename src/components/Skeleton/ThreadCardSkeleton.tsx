@@ -3,12 +3,18 @@ import { Skeleton } from "../ui/skeleton";
 
 const ThreadCardSkeleton = ({
   showComment = false,
+  noOfCards = 1,
 }: {
   showComment?: boolean;
+  noOfCards?: number;
 }) => {
-  return (
+  const cards = Array(noOfCards).fill("");
+  return cards.map((_, i) => (
     <>
-      <div className="mt-10 gap-3 flex w-full rounded-xl bg-dark-2 p-5 py-10">
+      <div
+        key={i}
+        className="mt-10 gap-3 flex w-full rounded-xl bg-dark-2 p-5 py-10"
+      >
         <Skeleton className="w-10 h-10 rounded-full" />
         <div>
           <div className="space-y-2">
@@ -36,6 +42,6 @@ const ThreadCardSkeleton = ({
         </div>
       )}
     </>
-  );
+  ));
 };
 export default ThreadCardSkeleton;

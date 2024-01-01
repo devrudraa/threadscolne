@@ -1,6 +1,8 @@
 import { fetchUserPosts } from "@/lib/actions/threads.actions";
 import { FC } from "react";
-import ThreadCard from "../cards/ThreadCard";
+import dynamic from "next/dynamic";
+const ThreadCard = dynamic(() => import("@/components/cards/ThreadCard"));
+import { Divider } from "@nextui-org/react";
 
 interface ThreadsTabProps {
   currentUserId: string;
@@ -13,17 +15,22 @@ const ThreadsTab: FC<ThreadsTabProps> = async ({ id, currentUserId }) => {
     <section className="mt-9 flex flex-col gap-10">
       {userThreads.map((thread) => {
         return (
-          <ThreadCard
-            key={thread.id}
-            id={thread.id}
-            author={thread.author}
-            comments={thread.children}
-            content={thread.text}
-            createdAt={thread.createdAt}
-            currentUser={currentUserId}
-            parentId={thread.parentId}
-            username={thread.author.username as string}
-          />
+          <>
+            <Divider />
+            <ThreadCard
+              key={thread.id}
+              image={thread.image}
+              imageDesc={thread.imageDesc}
+              id={thread.id}
+              author={thread.author}
+              content={thread.text}
+              createdAt={thread.createdAt}
+              // currentUser={currentUserId}
+              parentId={thread.parentId}
+              username={thread.author.username as string}
+              isDedicatedPage={false}
+            />
+          </>
         );
       })}
     </section>

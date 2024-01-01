@@ -1,4 +1,5 @@
-import ThreadCard from "@/components/cards/ThreadCard";
+import dynamic from "next/dynamic";
+const ThreadCard = dynamic(() => import("@/components/cards/ThreadCard"));
 import CommentForm from "@/components/forms/Comment";
 import { FetchThreadById } from "@/lib/actions/threads.actions";
 import getAuthSession from "@/lib/authOptions";
@@ -23,13 +24,16 @@ const Page: FC<pageProps> = async ({ params }) => {
         <ThreadCard
           key={thread.id}
           id={thread.id}
-          currentUser={thread.id}
+          // currentUser={thread.id}
+          image={thread.image}
+          imageDesc={thread.imageDesc}
           parentId={thread?.parentId}
           content={thread.text}
           author={thread.author}
           createdAt={thread.createdAt}
           comments={thread.children}
           username={thread.author.username as string}
+          isDedicatedPage={true}
         />
       </div>
       <div className="mt-7">
@@ -46,7 +50,8 @@ const Page: FC<pageProps> = async ({ params }) => {
             <ThreadCard
               key={childItem.id}
               id={childItem.id}
-              currentUser={childItem.id}
+              image={thread.image}
+              imageDesc={thread.imageDesc}
               parentId={childItem?.parentId}
               content={childItem.text}
               author={childItem.author}
@@ -54,6 +59,7 @@ const Page: FC<pageProps> = async ({ params }) => {
               comments={childItem.children}
               isComment={true}
               username={childItem.author.username as string}
+              isDedicatedPage={true}
             />
           );
         })}
