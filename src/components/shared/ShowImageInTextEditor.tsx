@@ -2,7 +2,7 @@ import { FC } from "react";
 import React from "react";
 import { Button } from "@nextui-org/react";
 import { X } from "lucide-react";
-import Image from "next/image";
+import { Image } from "@nextui-org/react";
 import { removeImgSrc } from "@/lib/Store/features/textEditor/editorSlice";
 import { useDispatch } from "react-redux";
 import ImageAltTextForm from "../forms/ImageAltTextForm";
@@ -26,7 +26,7 @@ const ShowImageInTextEditor: FC<ShowImageInTextEditorProps> = ({
         size="sm"
         isIconOnly
         variant="flat"
-        className="absolute top-2 right-2"
+        className="absolute top-2 right-2 z-20"
         onClick={removeImageFromStore}
       >
         <X size={"14"} />
@@ -37,7 +37,7 @@ const ShowImageInTextEditor: FC<ShowImageInTextEditorProps> = ({
         className="object-contain rounded-xl"
         width={400}
         height={400}
-        alt="someiMage"
+        alt="someMage"
       />
     </div>
   );
