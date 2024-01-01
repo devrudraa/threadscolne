@@ -31,6 +31,10 @@ import { RootState } from "@/lib/Store/Store";
 import { updateImgDesc } from "@/lib/Store/features/textEditor/editorSlice";
 
 const ImageAltTextForm = () => {
+  //! In this component I used `onSubmit({ desc: form.getValues("desc") })` this code to submit the form it is because this
+  //! component is a part of the component that is TipTap and in that component there is a form too while submitting this form that
+  //! TipTap form was also getting submitted to prevent that I used this approach
+
   const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
   const dispatch = useDispatch();
   const desc = useSelector((state: RootState) => state.desc);
@@ -39,7 +43,6 @@ const ImageAltTextForm = () => {
     resolver: zodResolver(ImageDescValidator),
   });
 
-  // 2. Define a submit handler.
   function onSubmit(values: ImageDescValidatorType) {
     let descValue = values.desc;
     if (values.desc === "") descValue = null;
@@ -53,7 +56,7 @@ const ImageAltTextForm = () => {
         size="sm"
         isIconOnly
         variant="flat"
-        className="absolute top-2 left-2"
+        className="absolute top-2 left-2 z-20"
         onClick={() => {
           form.setValue("desc", desc ? desc : "");
           onOpen();
@@ -84,11 +87,18 @@ const ImageAltTextForm = () => {
                             {/* @ts-ignore */}
                             <Input
                               isClearable
+                              autoComplete="off"
                               onClear={() => {
                                 dispatch(updateImgDesc(null));
                                 form.setValue("desc", "");
                               }}
                               size="sm"
+                              onKeyDown={(e) => {
+                                if (e.key === "Enter") {
+                                  onSubmit({ desc: form.getValues("desc") });
+                                  e.preventDefault();
+                                }
+                              }}
                               placeholder="This is a abstract art..."
                               {...field}
                             />
@@ -111,7 +121,13 @@ const ImageAltTextForm = () => {
                       >
                         Close
                       </Button>
-                      <Button type="submit" color="primary">
+                      <Button
+                        type="button"
+                        onClick={() =>
+                          onSubmit({ desc: form.getValues("desc") })
+                        }
+                        color="primary"
+                      >
                         Done
                       </Button>
                     </ModalFooter>

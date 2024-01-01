@@ -16,6 +16,7 @@ import { Toggle } from "../ui/toggle";
 import { useDispatch, useSelector } from "react-redux";
 import { updateImgSrc } from "@/lib/Store/features/textEditor/editorSlice";
 import { RootState } from "@/lib/Store/Store";
+import { Tooltip } from "@nextui-org/react";
 
 interface MenubarProps {
   editor: Editor | null;
@@ -34,42 +35,44 @@ const Menubar: FC<MenubarProps> = ({ editor }) => {
       function: editor.chain().toggleBold(),
       name: "bold",
       icon: <Bold />,
+      arialLabel: "bold",
     },
     {
       function: editor.chain().toggleItalic(),
       name: "italic",
       icon: <Italic />,
+      arialLabel: "italic",
     },
     {
       function: editor.chain().toggleStrike(),
       name: "strike",
       icon: <Strikethrough />,
+      arialLabel: "strike",
     },
     {
       function: editor.chain().toggleBulletList(),
       name: "bulletList",
       icon: <List />,
+      arialLabel: "bulletList",
     },
     {
       function: editor.chain().toggleOrderedList(),
       name: "orderedList",
       icon: <ListOrdered />,
+      arialLabel: "orderedList",
     },
     {
       function: editor.chain().toggleCodeBlock(),
       name: "codeBlock",
       icon: <Code />,
+      arialLabel: "codeBlock",
     },
     {
       function: editor.chain().toggleBlockquote(),
       name: "blockquote",
       icon: <Quote />,
+      arialLabel: "blockquote",
     },
-    // {
-    //   function: editor.chain().toggleBlockquote(),
-    //   name: "blockquote",
-    //   icon: <ImagePlus />,
-    // },
   ];
 
   function handleFileSelect(e: ChangeEvent<HTMLInputElement>) {
@@ -95,16 +98,18 @@ const Menubar: FC<MenubarProps> = ({ editor }) => {
     <div className="flex gap-2 flex-wrap px-2 py-3 bg-dark-3 ">
       {MenuBarTools.map((item, i) => {
         return (
-          <Toggle
-            pressed={editor.isActive(item.name)}
-            variant={"outline"}
-            key={i}
-            onClick={() => item.function.focus().run()}
-            // disabled={!item.function}
-            // className={ ? "is-active" : ""}
-          >
-            {item.icon}
-          </Toggle>
+          <Tooltip content={item.arialLabel} className="rounded-md" key={i}>
+            <Toggle
+              pressed={editor.isActive(item.name)}
+              variant={"outline"}
+              aria-label={item.arialLabel}
+              onClick={() => item.function.focus().run()}
+              // disabled={!item.function}
+              // className={ ? "is-active" : ""}
+            >
+              {item.icon}
+            </Toggle>
+          </Tooltip>
         );
       })}
       <input
@@ -114,19 +119,22 @@ const Menubar: FC<MenubarProps> = ({ editor }) => {
         hidden
         onChange={handleFileSelect}
       />
-      <Toggle
-        pressed={false}
-        variant={"outline"}
-        onClick={() => {
-          if (imageInpRef.current) {
-            imageInpRef.current.click();
-          }
-        }}
-        disabled={!!imageSrc}
-        type="button"
-      >
-        <ImagePlusIcon />
-      </Toggle>
+      <Tooltip content="uploadImage" className="rounded-md">
+        <Toggle
+          pressed={false}
+          aria-label="uploadImage"
+          variant={"outline"}
+          onClick={() => {
+            if (imageInpRef.current) {
+              imageInpRef.current.click();
+            }
+          }}
+          disabled={!!imageSrc}
+          type="button"
+        >
+          <ImagePlusIcon />
+        </Toggle>
+      </Tooltip>
       {/* <Input> */}
     </div>
   );
