@@ -31,7 +31,8 @@ export function formatDateString(dateString: string) {
   return `${time} - ${formattedDate}`;
 }
 
-export function formatTimeAgo(date: Date): string {
+export function formatTimeAgo(localDate: string | Date): string {
+  const date = new Date(localDate);
   const now = new Date();
 
   const timeDifference = now.getTime() - date.getTime();

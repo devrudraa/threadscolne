@@ -1,50 +1,90 @@
+"use client";
 import dynamic from "next/dynamic";
 const ThreadCard = dynamic(() => import("@/components/cards/ThreadCard"));
 import { FetchThreadByPagination } from "@/lib/actions/threads.actions";
-// import getAuthSession from "@/lib/authOptions";
+import { useInfiniteQuery } from "@tanstack/react-query";
+import ThreadCardSkeleton from "@/components/Skeleton/ThreadCardSkeleton";
+import { MainPageThreadType } from "@/types/QuerryFnReturnTypes";
+import { Spinner } from "@nextui-org/react";
+import { useInView } from "react-intersection-observer";
+import { useEffect } from "react";
 
-export default async function Home() {
-  // const session = await getAuthSession();
-  // if (!session) return null;
-  // const userOnBoarded = await IsUserOnBoarded({
-  //   userId: session?.user?.id as string,
-  // });
-  // if (!userOnBoarded) return redirect("/onboarding");
+async function fetchData({ pageParam }: { pageParam: number }) {
+  return JSON.parse(
+    await FetchThreadByPagination({
+      pageNumber: pageParam,
+    })
+  );
+}
 
-  const Threads = await FetchThreadByPagination({
-    pageNumber: 1,
-    pageSize: 20,
-  });
+interface fetchedPagesType {
+  Threads: MainPageThreadType[];
+  isNext: boolean;
+}
+
+export default function Home() {
+  const { ref, inView } = useInView({ threshold: 1 });
+
+  const { data, isLoading, isError, fetchNextPage, isFetchingNextPage } =
+    useInfiniteQuery({
+      queryKey: ["threads"],
+      queryFn: fetchData,
+
+      initialPageParam: 1,
+      getNextPageParam: (prev: fetchedPagesType, next: fetchedPagesType[]) => {
+        if (prev && next) {
+          if (prev.isNext) {
+            return next.length + 1;
+          } else {
+            return undefined;
+          }
+        }
+      },
+    });
+
+  useEffect(() => {
+    if (inView) {
+      console.log("yes");
+      fetchNextPage();
+    }
+  }, [fetchNextPage, inView]);
 
   return (
     <section>
       <h1 className="head-text">Thread</h1>
-      <section className="empty-9 flex flex-col gap-10">
-        {Threads.Threads.length === 0 ? (
-          <span className="no-result"></span>
-        ) : (
-          <>
-            {Threads.Threads.map((threadCard) => {
+      {!isLoading && data ? (
+        <>
+          {data.pages.map((Thread) => {
+            return Thread.Threads.map((threadCard: MainPageThreadType, i) => {
               return (
-                <ThreadCard
+                <div
+                  ref={i + 1 === Thread.Threads.length ? ref : undefined}
                   key={threadCard.id}
-                  id={threadCard.id}
-                  // currentUser={session?.user.id!}
-                  image={threadCard.image}
-                  imageDesc={threadCard.imageDesc}
-                  parentId={threadCard?.parentId}
-                  content={threadCard.text}
-                  author={threadCard.author}
-                  createdAt={threadCard.createdAt}
-                  comments={threadCard.children}
-                  username={threadCard.author.username as string}
-                  isDedicatedPage={false}
-                />
+                >
+                  <ThreadCard
+                    id={threadCard.id}
+                    // currentUser={session?.user.id!}
+                    image={threadCard.image}
+                    imageDesc={threadCard.imageDesc}
+                    parentId={threadCard?.parentId}
+                    content={threadCard.text}
+                    author={threadCard.author}
+                    createdAt={threadCard.createdAt}
+                    comments={threadCard.children}
+                    username={threadCard.author.username as string}
+                    isDedicatedPage={false}
+                  />
+                </div>
               );
-            })}
-          </>
-        )}
-      </section>
+            });
+          })}
+          <div className="w-full mt-5 flex items-center justify-center">
+            {isFetchingNextPage && <Spinner className="mx-auto" />}
+          </div>
+        </>
+      ) : (
+        <ThreadCardSkeleton noOfCards={5} />
+      )}
     </section>
   );
 }

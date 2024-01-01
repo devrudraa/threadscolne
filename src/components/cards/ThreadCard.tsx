@@ -18,7 +18,7 @@ interface ThreadCardProps {
     id: string;
     username?: string | null;
   };
-  createdAt: Date;
+  createdAt: string | Date;
   username: string;
   comments?: {
     author: {

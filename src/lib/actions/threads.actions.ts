@@ -46,13 +46,13 @@ export async function AddThread({
 //* ---------------------------------------------------------------FetchThreads()------------------------------------------------
 // This is used on the home page where you have to display only a number of threads
 interface FetchThreadsProps {
-  pageNumber: number;
-  pageSize: number;
+  pageNumber?: number;
+  pageSize?: number;
 }
 
 export async function FetchThreadByPagination({
-  pageNumber,
-  pageSize,
+  pageNumber = 1,
+  pageSize = 10,
 }: FetchThreadsProps) {
   const SkipAmount = (pageNumber - 1) * pageSize;
 
@@ -97,7 +97,7 @@ export async function FetchThreadByPagination({
   });
 
   const isNext = totalResults.length > SkipAmount + Threads?.length;
-  return { Threads, isNext };
+  return JSON.stringify({ Threads, isNext });
 }
 
 //* ---------------------------------------------------------------FetchThreadById()------------------------------------------------

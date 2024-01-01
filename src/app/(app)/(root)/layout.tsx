@@ -1,6 +1,5 @@
 import BottomBar from "@/components/shared/Bottombar";
 import LeftSideBar from "@/components/shared/Leftsidebar";
-import RightSideBar from "@/components/shared/Rightsidebar";
 import TopBar from "@/components/shared/Topbar";
 import getAuthSession from "@/lib/authOptions";
 import { redirect } from "next/navigation";
