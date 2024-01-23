@@ -23,6 +23,7 @@ const Page: FC<pageProps> = async ({ params }) => {
       <div>
         <ThreadCard
           key={thread.id}
+          likedBy={thread.likedBy}
           id={thread.id}
           // currentUser={thread.id}
           image={thread.image}
@@ -49,6 +50,7 @@ const Page: FC<pageProps> = async ({ params }) => {
           return (
             <ThreadCard
               key={childItem.id}
+              likedBy={childItem.likedBy}
               id={childItem.id}
               image={thread.image}
               imageDesc={thread.imageDesc}

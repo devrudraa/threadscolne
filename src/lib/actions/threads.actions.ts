@@ -61,6 +61,14 @@ export async function FetchThreadByPagination({
       createdAt: "desc",
     },
     include: {
+      likedBy: {
+        select: {
+          name: true,
+          id: true,
+          username: true,
+          image: true,
+        },
+      },
       author: {
         select: {
           name: true,
@@ -105,11 +113,19 @@ export async function FetchThreadById(threadId: string) {
         id: threadId,
       },
       include: {
-        author: {
+        likedBy: {
           select: {
             name: true,
-            image: true,
             id: true,
+            username: true,
+            image: true,
+          },
+        },
+        author: {
+          select: {
+            id: true,
+            name: true,
+            image: true,
             username: true,
           },
         },
@@ -118,6 +134,14 @@ export async function FetchThreadById(threadId: string) {
             createdAt: "desc",
           },
           include: {
+            likedBy: {
+              select: {
+                name: true,
+                id: true,
+                username: true,
+                image: true,
+              },
+            },
             author: {
               select: {
                 name: true,
@@ -231,6 +255,14 @@ export async function fetchUserPosts({
       createdAt: "desc",
     },
     include: {
+      likedBy: {
+        select: {
+          name: true,
+          id: true,
+          username: true,
+          image: true,
+        },
+      },
       author: {
         select: {
           username: true,
@@ -256,4 +288,71 @@ export async function fetchUserPosts({
   const isNext = totalResults.length > SkipAmount + userThread?.length;
 
   return { userThread, isNext };
+}
+
+//* ---------------------------------------------------------------likeUnLike()------------------------------------------------
+interface likeUnLikeProps {
+  threadId: string;
+  userId: string;
+}
+
+export async function likeUnLike({
+  threadId,
+  userId,
+}: likeUnLikeProps): Promise<{ message: "unlike" | "liked"; likedBy: any[] }> {
+  try {
+    // Fetch the thread with likedBy relation
+    const existingThread = await prisma.thread.findUnique({
+      where: { id: threadId },
+      include: { likedBy: true },
+    });
+
+    if (!existingThread) {
+      throw new Error(`Thread with id ${threadId} not found`);
+    }
+
+    // Check if the user has already liked the thread
+    const userLikedThread = existingThread.likedBy.some(
+      (user) => user.id === userId
+    );
+
+    if (userLikedThread) {
+      // User has already liked the thread, so remove the like
+      const updatedThread = await prisma.thread.update({
+        where: { id: threadId },
+        data: {
+          likedBy: {
+            disconnect: { id: userId },
+          },
+        },
+        include: { likedBy: true }, // Include likedBy relation in the response
+      });
+
+      return {
+        message: "unlike",
+        likedBy: updatedThread.likedBy,
+      };
+    } else {
+      // User has not liked the thread, so add the like
+      const updatedThread = await prisma.thread.update({
+        where: { id: threadId },
+        data: {
+          likedBy: {
+            connect: { id: userId },
+          },
+        },
+        include: { likedBy: true }, // Include likedBy relation in the response
+      });
+
+      return {
+        message: "liked",
+        likedBy: updatedThread.likedBy,
+      };
+    }
+  } catch (error) {
+    console.error("Error adding like:", error);
+    throw error; // Rethrow the error for handling at a higher level if needed
+  } finally {
+    await prisma.$disconnect(); // Disconnect the Prisma client
+  }
 }

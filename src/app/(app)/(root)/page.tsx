@@ -4,10 +4,10 @@ const ThreadCard = dynamic(() => import("@/components/cards/ThreadCard"));
 import { FetchThreadByPagination } from "@/lib/actions/threads.actions";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import ThreadCardSkeleton from "@/components/Skeleton/ThreadCardSkeleton";
-import { MainPageThreadType } from "@/types/QuerryFnReturnTypes";
 import { Spinner } from "@nextui-org/react";
 import { useInView } from "react-intersection-observer";
 import { useEffect } from "react";
+import { Thread, User } from "@prisma/client";
 
 async function fetchData({ pageParam }: { pageParam: number }) {
   return JSON.parse(
@@ -17,8 +17,19 @@ async function fetchData({ pageParam }: { pageParam: number }) {
   );
 }
 
+interface ThreadWithRelations extends Thread {
+  author: User;
+  children?: { author: { image: string } }[];
+  likedBy: {
+    name: string;
+    id: string;
+    username: string;
+    image: string;
+  }[];
+}
+
 interface fetchedPagesType {
-  Threads: MainPageThreadType[];
+  Threads: ThreadWithRelations[];
   isNext: boolean;
 }
 
@@ -44,7 +55,6 @@ export default function Home() {
 
   useEffect(() => {
     if (inView) {
-      console.log("yes");
       fetchNextPage();
     }
   }, [fetchNextPage, inView]);
@@ -55,7 +65,7 @@ export default function Home() {
       {!isLoading && data ? (
         <>
           {data.pages.map((Thread) => {
-            return Thread.Threads.map((threadCard: MainPageThreadType, i) => {
+            return Thread.Threads.map((threadCard, i) => {
               return (
                 <div
                   ref={i + 1 === Thread.Threads.length ? ref : undefined}
@@ -63,7 +73,7 @@ export default function Home() {
                 >
                   <ThreadCard
                     id={threadCard.id}
-                    // currentUser={session?.user.id!}
+                    likedBy={threadCard.likedBy}
                     image={threadCard.image}
                     imageDesc={threadCard.imageDesc}
                     parentId={threadCard?.parentId}
