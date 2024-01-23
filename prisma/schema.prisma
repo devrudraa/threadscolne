@@ -18,9 +18,10 @@ model User {
   sessions      Session[]
 
   //* Custon Values
-  bio      String?
-  Thread   Thread[]
-  username String?  @unique
+  bio          String?
+  Thread       Thread[]
+  username     String?  @unique
+  likedThreads Thread[] @relation("LikedThreads")
 }
 
 model Thread {
@@ -30,6 +31,7 @@ model Thread {
   parentId   String?
   image      String?
   imageDesc  String?
+  likedBy    User[]   @relation("LikedThreads")
   author     User     @relation(fields: [userUserId], references: [id])
   userUserId String
 

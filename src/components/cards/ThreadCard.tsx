@@ -2,11 +2,14 @@
 import { formatTimeAgo } from "@/lib/utils";
 import { Image } from "@nextui-org/react";
 import Link from "next/link";
-import { FC, useMemo } from "react";
+import { FC, useMemo, useState } from "react";
 import "@/styles/tiptap.css";
 import { useRouter } from "next/navigation";
 import StarterKit from "@tiptap/starter-kit";
 import { EditorContent, useEditor } from "@tiptap/react";
+import { useSession } from "next-auth/react";
+import ThreadCardSkeleton from "../Skeleton/ThreadCardSkeleton";
+import { likeUnLike } from "@/lib/actions/threads.actions";
 
 interface ThreadCardProps {
   id: string;
@@ -29,6 +32,12 @@ interface ThreadCardProps {
   isDedicatedPage: boolean;
   image: string | null;
   imageDesc: string | null;
+  likedBy: {
+    id: string;
+    name: string;
+    username: string | null;
+    image: string;
+  }[];
 }
 const ThreadCard: FC<ThreadCardProps> = ({
   author,
@@ -40,10 +49,16 @@ const ThreadCard: FC<ThreadCardProps> = ({
   username,
   isComment,
   image,
+  likedBy,
   imageDesc = "",
   isDedicatedPage,
 }) => {
   const router = useRouter();
+  const { data, status } = useSession();
+  const [isThreadLiked, setIsThreadLiked] = useState<{
+    status: boolean | "loading";
+  }>({ status: likedBy.some((obj) => obj.id === data?.user.id) });
+  const [likeCount, setLikeCount] = useState<number>(likedBy.length);
 
   const extensions = useMemo(() => [StarterKit], []);
   const editorProps = useMemo(
@@ -60,6 +75,22 @@ const ThreadCard: FC<ThreadCardProps> = ({
     editable: false,
     content: content,
   });
+
+  if (status === "loading") {
+    return <ThreadCardSkeleton />;
+  }
+
+  async function likeButtonClicked() {
+    setIsThreadLiked({ status: "loading" });
+    const result = await likeUnLike({ threadId: id, userId: data?.user.id! });
+    if (result.message === "liked") {
+      setLikeCount((prev) => prev + 1);
+      setIsThreadLiked({ status: true });
+    } else {
+      setLikeCount((prev) => prev - 1);
+      setIsThreadLiked({ status: false });
+    }
+  }
 
   return (
     <article
@@ -132,14 +163,28 @@ const ThreadCard: FC<ThreadCardProps> = ({
             {/* </Link> */}
             <div className="mt-5 flex flex-col gap-3">
               <div className="flex gap-3.5">
-                <Image
-                  src={"/assets/heart-gray.svg"}
-                  alt="Heart Like Icon"
-                  height={24}
-                  width={24}
-                  className="cursor-pointer object-contain"
-                />
-                <Link href={`/thread/${id}`}>
+                <button
+                  className={`flex items-center text-subtle-medium font-thin gap-2 ${
+                    isThreadLiked.status === "loading" && "opacity-25"
+                  }`}
+                  onClick={likeButtonClicked}
+                  disabled={isThreadLiked.status === "loading"}
+                >
+                  <Image
+                    src={`/assets/heart-${
+                      isThreadLiked.status === true ? "filled" : "gray"
+                    }.svg`}
+                    alt="Heart Like Icon"
+                    height={24}
+                    width={24}
+                    className="cursor-pointer object-contain "
+                  />
+                  {likeCount}
+                </button>
+                <Link
+                  href={`/thread/${id}`}
+                  className="flex items-center text-subtle-medium font-thin gap-2"
+                >
                   <Image
                     src={"/assets/reply.svg"}
                     alt="reply Icon"
@@ -147,6 +192,7 @@ const ThreadCard: FC<ThreadCardProps> = ({
                     width={24}
                     className="cursor-pointer object-contain"
                   />
+                  {comments?.length}
                 </Link>
                 <Image
                   src={"/assets/repost.svg"}

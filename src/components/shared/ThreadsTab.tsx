@@ -14,8 +14,6 @@ interface ThreadsTabProps {
 }
 
 async function fetchData({ pageParam, id }: { pageParam: number; id: string }) {
-  console.log("The is is", id);
-
   return await fetchUserPosts({ id: id });
 }
 
@@ -73,6 +71,7 @@ const ThreadsTab: FC<ThreadsTabProps> = ({ id, currentUserId }) => {
                 key={showThread.id}
               >
                 <ThreadCard
+                  likedBy={showThread.likedBy}
                   image={showThread.image}
                   imageDesc={showThread.imageDesc}
                   id={showThread.id}
