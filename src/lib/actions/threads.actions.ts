@@ -1,11 +1,6 @@
 "use server";
 import { revalidatePath } from "next/cache";
 import prisma from "../PrismaClient";
-import { useSelector } from "react-redux";
-import { RootState } from "../Store/Store";
-import { dataURLtoFile, isBase64Image } from "../utils";
-import { useUploadThing } from "../uploadthing";
-
 interface ThreadsParams {
   text: string;
   authorId: string;
@@ -104,47 +99,53 @@ export async function FetchThreadByPagination({
 // This is used on the dedicated thread page where you have to give all the info of one thread
 
 export async function FetchThreadById(threadId: string) {
-  return await prisma.thread.findFirst({
-    where: {
-      id: threadId,
-    },
-    include: {
-      author: {
-        select: {
-          name: true,
-          image: true,
-          id: true,
-          username: true,
-        },
+  try {
+    const threadPost = await prisma.thread.findFirst({
+      where: {
+        id: threadId,
       },
-      children: {
-        orderBy: {
-          createdAt: "desc",
-        },
-        include: {
-          author: {
-            select: {
-              name: true,
-              image: true,
-              id: true,
-              username: true,
-            },
+      include: {
+        author: {
+          select: {
+            name: true,
+            image: true,
+            id: true,
+            username: true,
           },
-          children: {
-            select: {
-              parent: true,
-              author: {
-                select: {
-                  name: true,
-                  image: true,
+        },
+        children: {
+          orderBy: {
+            createdAt: "desc",
+          },
+          include: {
+            author: {
+              select: {
+                name: true,
+                image: true,
+                id: true,
+                username: true,
+              },
+            },
+            children: {
+              select: {
+                parent: true,
+                author: {
+                  select: {
+                    name: true,
+                    image: true,
+                  },
                 },
               },
             },
           },
         },
       },
-    },
-  });
+    });
+
+    return threadPost;
+  } catch (error) {
+    return false;
+  }
 }
 
 //* ----------------------------------------------------------------addCommentToThread()----------------------------------------------------------------
@@ -206,16 +207,26 @@ export async function addCommentToThread({
 
 interface fetchUserPostsProps {
   id: string;
+  pageNumber?: number;
+  pageSize?: number;
 }
 
-export async function fetchUserPosts({ id }: fetchUserPostsProps) {
-  const userThread = prisma.thread.findMany({
+export async function fetchUserPosts({
+  id,
+  pageNumber = 1,
+  pageSize = 5,
+}: fetchUserPostsProps) {
+  const SkipAmount = (pageNumber - 1) * pageSize;
+
+  const userThread = await prisma.thread.findMany({
     where: {
       parentId: null,
       author: {
         id: id,
       },
     },
+    take: pageSize,
+    skip: SkipAmount,
     orderBy: {
       createdAt: "desc",
     },
@@ -230,5 +241,19 @@ export async function fetchUserPosts({ id }: fetchUserPostsProps) {
       },
     },
   });
-  return userThread;
+
+  const totalResults = await prisma.thread.findMany({
+    where: {
+      parentId: null,
+      author: {
+        id: id,
+      },
+    },
+    include: {
+      _count: true,
+    },
+  });
+  const isNext = totalResults.length > SkipAmount + userThread?.length;
+
+  return { userThread, isNext };
 }
