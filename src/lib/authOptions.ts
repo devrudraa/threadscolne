@@ -41,7 +41,7 @@ export const authOptions: AuthOptions = {
 
       if (userAccount?.provider === account?.provider) return true;
 
-      return "/auth/error?error=Already exist an account with this email";
+      return "/auth/sign-in?error=Already exist an account with this email";
     },
 
     async session({ token, session, user }) {
