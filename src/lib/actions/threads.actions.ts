@@ -1,6 +1,7 @@
 "use server";
 import { revalidatePath } from "next/cache";
 import prisma from "../PrismaClient";
+import { tree } from "next/dist/build/templates/app-page";
 interface ThreadsParams {
   text: string;
   authorId: string;
@@ -299,7 +300,9 @@ interface likeUnLikeProps {
 export async function likeUnLike({
   threadId,
   userId,
-}: likeUnLikeProps): Promise<{ message: "unlike" | "liked"; likedBy: any[] }> {
+}: likeUnLikeProps): Promise<
+  { error: boolean; errorMessage: unknown } | null | undefined
+> {
   try {
     // Fetch the thread with likedBy relation
     const existingThread = await prisma.thread.findUnique({
@@ -318,7 +321,7 @@ export async function likeUnLike({
 
     if (userLikedThread) {
       // User has already liked the thread, so remove the like
-      const updatedThread = await prisma.thread.update({
+      await prisma.thread.update({
         where: { id: threadId },
         data: {
           likedBy: {
@@ -327,14 +330,10 @@ export async function likeUnLike({
         },
         include: { likedBy: true }, // Include likedBy relation in the response
       });
-
-      return {
-        message: "unlike",
-        likedBy: updatedThread.likedBy,
-      };
+      // return true;
     } else {
       // User has not liked the thread, so add the like
-      const updatedThread = await prisma.thread.update({
+      await prisma.thread.update({
         where: { id: threadId },
         data: {
           likedBy: {
@@ -343,15 +342,69 @@ export async function likeUnLike({
         },
         include: { likedBy: true }, // Include likedBy relation in the response
       });
-
-      return {
-        message: "liked",
-        likedBy: updatedThread.likedBy,
-      };
+      // return true;
     }
   } catch (error) {
     console.error("Error adding like:", error);
-    throw error; // Rethrow the error for handling at a higher level if needed
+    return {
+      error: true,
+      errorMessage: error,
+    };
+  } finally {
+    await prisma.$disconnect(); // Disconnect the Prisma client
+  }
+}
+
+//* ------------------------------------------------------- Thread Liked By -----------------------------------------
+
+interface ThreadLikedByProps {
+  threadId: string;
+}
+interface Error {
+  error: boolean;
+  errorMessage: unknown;
+}
+interface Data {
+  likedBy: {
+    image: string;
+    username: string | null;
+    name: string;
+  }[];
+}
+
+export type threadLikedByReturnValue = Error | Data;
+export async function threadLikedBy({
+  threadId,
+}: ThreadLikedByProps): Promise<threadLikedByReturnValue> {
+  try {
+    // Fetch the thread with likedBy relation
+    const existingThread = await prisma.thread.findUnique({
+      where: { id: threadId },
+      select: {
+        likedBy: {
+          select: {
+            name: true,
+            username: true,
+            image: true,
+          },
+        },
+      },
+    });
+
+    if (!existingThread) {
+      return {
+        error: true,
+        errorMessage: "Thread not found!",
+      };
+    }
+
+    return existingThread;
+  } catch (error) {
+    console.error("Error adding like:", error);
+    return {
+      error: true,
+      errorMessage: error,
+    };
   } finally {
     await prisma.$disconnect(); // Disconnect the Prisma client
   }

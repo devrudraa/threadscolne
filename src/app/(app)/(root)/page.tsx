@@ -36,10 +36,11 @@ interface fetchedPagesType {
 export default function Home() {
   const { ref, inView } = useInView({ threshold: 1 });
 
-  const { data, isLoading, isError, fetchNextPage, isFetchingNextPage } =
+  const { data, isLoading, fetchNextPage, isFetchingNextPage } =
     useInfiniteQuery({
       queryKey: ["threads"],
       queryFn: fetchData,
+      refetchOnWindowFocus: false,
 
       initialPageParam: 1,
       getNextPageParam: (prev: fetchedPagesType, next: fetchedPagesType[]) => {

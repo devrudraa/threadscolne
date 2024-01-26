@@ -44,7 +44,6 @@ const ThreadsTab: FC<ThreadsTabProps> = ({ id, currentUserId }) => {
 
   useEffect(() => {
     if (inView) {
-      console.log("yes");
       fetchNextPage();
     }
   }, [fetchNextPage, inView]);
