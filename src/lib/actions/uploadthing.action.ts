@@ -5,7 +5,6 @@ import prisma from "../PrismaClient";
 const utapi = new UTApi();
 
 export async function deleteFile(file: string | string[]): Promise<void> {
-  console.log(file);
   await utapi.deleteFiles(file);
 }
 

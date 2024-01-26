@@ -50,8 +50,6 @@ export async function GetUserDataFiled({
 }
 
 export async function GetUserData({ username }: { username: string }) {
-  console.log(username);
-
   try {
     const UserResult = await prisma.user.findFirst({
       where: {
@@ -68,7 +66,7 @@ export async function GetUserData({ username }: { username: string }) {
         },
       },
     });
-    console.log(UserResult);
+
     return UserResult;
   } catch (error) {}
 }
