@@ -63,29 +63,32 @@ const ThreadsTab: FC<ThreadsTabProps> = ({ id, currentUserId }) => {
       {!isLoading && Threads ? (
         Threads.map((thread) => {
           if (!thread) return null;
-          return thread.userThread.map((showThread, i) => {
-            return (
-              <div
-                ref={i + 1 === thread.userThread.length ? ref : undefined}
-                key={showThread.id}
-              >
-                <ThreadCard
-                  likedBy={showThread.likedBy}
-                  image={showThread.image}
-                  imageDesc={showThread.imageDesc}
-                  id={showThread.id}
-                  author={showThread.author}
-                  content={showThread.text}
-                  createdAt={showThread.createdAt}
-                  // currentUser={currentUserId}
-                  parentId={showThread.parentId}
-                  username={showThread.author.username as string}
-                  isDedicatedPage={false}
-                />
-                <Divider />
-              </div>
-            );
-          });
+          return (
+            thread.userThread &&
+            thread.userThread.map((showThread, i) => {
+              return (
+                <div
+                  ref={i + 1 === thread.userThread.length ? ref : undefined}
+                  key={showThread.id}
+                >
+                  <ThreadCard
+                    likedBy={showThread.likedBy}
+                    image={showThread.image}
+                    imageDesc={showThread.imageDesc}
+                    id={showThread.id}
+                    author={showThread.author}
+                    content={showThread.text}
+                    createdAt={showThread.createdAt}
+                    // currentUser={currentUserId}
+                    parentId={showThread.parentId}
+                    username={showThread.author.username as string}
+                    isDedicatedPage={false}
+                  />
+                  <Divider />
+                </div>
+              );
+            })
+          );
         })
       ) : (
         <div className="w-full mt-5 flex items-center justify-center">
