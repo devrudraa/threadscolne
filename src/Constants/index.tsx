@@ -32,8 +32,8 @@ export const sidebarLinks = [
 ];
 
 interface ProfileTab {
-  value: "threads" | "replies" | "tagged";
-  label: "Threads" | "Replies" | "Tagged";
+  value: "threads" | "replies" | "liked";
+  label: "Threads" | "Replies" | "Liked";
   icon: string;
 }
 
@@ -42,7 +42,7 @@ interface ProfileTabsProps extends Array<ProfileTab> {}
 export const profileTabs: ProfileTabsProps = [
   { value: "threads", label: "Threads", icon: "/assets/reply.svg" },
   { value: "replies", label: "Replies", icon: "/assets/members.svg" },
-  { value: "tagged", label: "Tagged", icon: "/assets/tag.svg" },
+  { value: "liked", label: "Liked", icon: "/assets/heart-gray.svg" },
 ];
 
 export const communityTabs = [

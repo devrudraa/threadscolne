@@ -56,11 +56,14 @@ export async function GetUserData({ username }: { username: string }) {
         username: username.trim(),
       },
       include: {
-        Thread: {
-          where: {
-            parentId: null,
-          },
+        likedThreads: {
           select: {
+            _count: true,
+          },
+        },
+        Thread: {
+          select: {
+            parentId: true,
             _count: true,
           },
         },
