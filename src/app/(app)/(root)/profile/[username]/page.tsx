@@ -7,6 +7,7 @@ import { GetUserData } from "@/lib/actions/utils.actions";
 import ProfileHeader from "@/components/shared/ProfileHeader";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import ThreadCardSkeleton from "@/components/Skeleton/ThreadCardSkeleton";
+import UserLikedThreads from "@/components/shared/UserThreadsLiked";
 
 interface pageProps {
   params: { username: string };
@@ -16,7 +17,10 @@ const Page: FC<pageProps> = async ({ params }) => {
   if (!session) return null;
 
   const userData = await GetUserData({ username: params.username });
-  // if (!userData) return redirect("/auth/sign-in");
+  const yourThreadsCount = userData?.Thread.filter((e) => e.parentId === null);
+  const repliedThreadsCount = userData?.Thread.filter(
+    (e) => e.parentId != null
+  );
 
   return userData ? (
     <section>
@@ -44,7 +48,17 @@ const Page: FC<pageProps> = async ({ params }) => {
 
                 {tab.label === "Threads" && (
                   <p className="ml-1 rounded-sm bg-light-4 px-2 py-1 !text-tiny-medium text-light-2">
-                    {userData.Thread.length}
+                    {yourThreadsCount?.length}
+                  </p>
+                )}
+                {tab.label === "Replies" && (
+                  <p className="ml-1 rounded-sm bg-light-4 px-2 py-1 !text-tiny-medium text-light-2">
+                    {repliedThreadsCount?.length}
+                  </p>
+                )}
+                {tab.label === "Liked" && (
+                  <p className="ml-1 rounded-sm bg-light-4 px-2 py-1 !text-tiny-medium text-light-2">
+                    {userData?.likedThreads.length}
                   </p>
                 )}
               </TabsTrigger>
@@ -57,10 +71,16 @@ const Page: FC<pageProps> = async ({ params }) => {
                 value={tab.value}
                 className="w-full text-light-1"
               >
-                {tab.value === "tagged" ? (
-                  <p>tagged threads</p>
+                {tab.value === "liked" ? (
+                  <UserLikedThreads
+                    tab={tab.value}
+                    currentUserId={session.user.id}
+                    id={userData.id}
+                  />
                 ) : (
                   <ThreadsTab
+                    tab={tab.value}
+                    isFetchingReplies={tab.value === "replies" ? true : false}
                     currentUserId={session.user.id}
                     id={userData.id}
                   />

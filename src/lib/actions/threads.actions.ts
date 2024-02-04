@@ -1,7 +1,8 @@
 "use server";
 import { revalidatePath } from "next/cache";
 import prisma from "../PrismaClient";
-import { tree } from "next/dist/build/templates/app-page";
+import getAuthSession from "../authOptions";
+
 interface ThreadsParams {
   text: string;
   authorId: string;
@@ -234,21 +235,36 @@ interface fetchUserPostsProps {
   id: string;
   pageNumber?: number;
   pageSize?: number;
+  isFetchingReplies: boolean;
 }
 
 export async function fetchUserPosts({
   id,
+  isFetchingReplies,
   pageNumber = 1,
   pageSize = 5,
 }: fetchUserPostsProps) {
   const SkipAmount = (pageNumber - 1) * pageSize;
 
+  let whereCondition: any = {
+    author: {
+      id: id,
+    },
+  };
+
+  if (isFetchingReplies) {
+    whereCondition.parentId = {
+      not: null,
+    };
+  } else {
+    whereCondition.parentId = null;
+  }
+  // console.log(whereCondition);
+
   const userThread = await prisma.thread.findMany({
     where: {
-      parentId: null,
-      author: {
-        id: id,
-      },
+      author: { id: id },
+      parentId: isFetchingReplies ? { not: null } : null,
     },
     take: pageSize,
     skip: SkipAmount,
@@ -407,5 +423,31 @@ export async function threadLikedBy({
     };
   } finally {
     await prisma.$disconnect(); // Disconnect the Prisma client
+  }
+}
+
+//* ------------------------------------------------------- DeleteThread -----------------------------------------
+interface DeleteThreadProps {
+  threadId: string;
+  authorId: string;
+}
+
+export async function DeleteThread({ threadId, authorId }: DeleteThreadProps) {
+  const session = await getAuthSession();
+  if (!session) return null;
+  if (session?.user.id != authorId) return null;
+  try {
+    //! Deleting the children
+    await prisma.thread.deleteMany({
+      where: { parentId: threadId },
+    });
+
+    //! Deleting the main thread
+    await prisma.thread.delete({
+      where: { id: threadId },
+    });
+    return true;
+  } catch (error) {
+    return null;
   }
 }

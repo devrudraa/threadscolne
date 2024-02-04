@@ -1,5 +1,4 @@
 "use client";
-import { fetchUserPosts } from "@/lib/actions/threads.actions";
 import { FC, useEffect } from "react";
 import dynamic from "next/dynamic";
 const ThreadCard = dynamic(() => import("@/components/cards/ThreadCard"));
@@ -7,35 +6,25 @@ import { Divider, Spinner } from "@nextui-org/react";
 import { useInView } from "react-intersection-observer";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import ThreadCardSkeleton from "../Skeleton/ThreadCardSkeleton";
+import { fetchUserLikedPosts } from "@/lib/actions/user.actions";
 import Alert from "./Alert";
 
-async function fetchData({
-  pageParam,
-  id,
-  isFetchingReplies,
-}: {
-  pageParam: number;
-  id: string;
-  isFetchingReplies: boolean;
-}) {
-  return await fetchUserPosts({
+async function fetchData({ pageParam, id }: { pageParam: number; id: string }) {
+  return await fetchUserLikedPosts({
     id: id,
     pageNumber: pageParam,
-    isFetchingReplies,
   });
 }
 
-interface ThreadsTabProps {
-  isFetchingReplies: boolean;
+interface userLikedThreadsProps {
   currentUserId: string;
   tab: string;
   id: string;
 }
-const ThreadsTab: FC<ThreadsTabProps> = ({
+const UserLikedThreads: FC<userLikedThreadsProps> = ({
   id,
   currentUserId,
   tab,
-  isFetchingReplies,
 }) => {
   const { ref, inView } = useInView({ threshold: 1 });
 
@@ -46,8 +35,7 @@ const ThreadsTab: FC<ThreadsTabProps> = ({
     isFetchingNextPage,
   } = useInfiniteQuery({
     queryKey: [tab],
-    queryFn: async (e) =>
-      await fetchData({ id: id, pageParam: e.pageParam, isFetchingReplies }),
+    queryFn: async (e) => await fetchData({ id: id, pageParam: e.pageParam }),
     initialPageParam: 1,
     getNextPageParam: (prev, next) => {
       if (prev && next) {
@@ -79,24 +67,25 @@ const ThreadsTab: FC<ThreadsTabProps> = ({
   return (
     <section className="mt-9 flex flex-col gap-10">
       {!isLoading && Threads ? (
-        Threads.userThread.length > 0 ? (
-          Threads.userThread.map((showThread, i) => {
+        Threads.likedThreads.length > 0 ? (
+          Threads.likedThreads.map((thread, i) => {
+            if (!thread) return null;
             return (
               <div
-                ref={i + 1 === Threads.userThread.length ? ref : undefined}
-                key={showThread.id}
+                ref={i + 1 === Threads.likedThreads.length ? ref : undefined}
+                key={thread.id}
               >
                 <ThreadCard
-                  likedBy={showThread.likedBy}
-                  image={showThread.image}
-                  imageDesc={showThread.imageDesc}
-                  id={showThread.id}
-                  author={showThread.author}
-                  content={showThread.text}
-                  createdAt={showThread.createdAt}
+                  likedBy={thread.likedBy}
+                  image={thread.image}
+                  imageDesc={thread.imageDesc}
+                  id={thread.id}
+                  author={thread.author}
+                  content={thread.text}
+                  createdAt={thread.createdAt}
                   // currentUser={currentUserId}
-                  parentId={showThread.parentId}
-                  username={showThread.author.username as string}
+                  parentId={thread.parentId}
+                  username={thread.author.username as string}
                   isDedicatedPage={false}
                 />
                 <Divider className="mt-3" />
@@ -114,4 +103,4 @@ const ThreadsTab: FC<ThreadsTabProps> = ({
     </section>
   );
 };
-export default ThreadsTab;
+export default UserLikedThreads;

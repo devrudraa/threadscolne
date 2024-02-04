@@ -12,6 +12,7 @@ import ThreadCardSkeleton from "../Skeleton/ThreadCardSkeleton";
 import { likeUnLike } from "@/lib/actions/threads.actions";
 import { Dot } from "lucide-react";
 import ShowLikedPerson from "../modal/ShowLikedPerson";
+import ThreadCardOptions from "./ThreadCardOptions";
 
 interface ThreadCardProps {
   id: string;
@@ -229,20 +230,6 @@ const ThreadCard: FC<ThreadCardProps> = ({
                   />
                   {comments?.length}
                 </Link>
-                {/* <Image
-                  src={"/assets/repost.svg"}
-                  alt="repost Icon"
-                  height={24}
-                  width={24}
-                  className="cursor-pointer object-contain"
-                />
-                <Image
-                  src={"/assets/share.svg"}
-                  alt="share Icon"
-                  height={24}
-                  width={24}
-                  className="cursor-pointer object-contain"
-                /> */}
               </div>
 
               {comments && isComment && comments.length > 0 && (
@@ -253,6 +240,9 @@ const ThreadCard: FC<ThreadCardProps> = ({
             </div>
           </div>
         </div>
+        {data?.user.id === author.id && (
+          <ThreadCardOptions authorId={author.id} threadId={id} />
+        )}
       </div>
 
       {/* //* Adding the image of the person who replied */}
