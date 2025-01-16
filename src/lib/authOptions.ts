@@ -1,11 +1,11 @@
-import { PrismaAdapter } from "@auth/prisma-adapter";
+import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import { PrismaClient } from "@prisma/client";
-import { NextAuthOptions, getServerSession } from "next-auth";
+import { AuthOptions, getServerSession } from "next-auth";
 import GithubProvider from "next-auth/providers/github";
 import GoogleProvider from "next-auth/providers/google";
 
 const prisma = new PrismaClient();
-export const authOptions: NextAuthOptions = {
+export const authOptions: AuthOptions = {
   adapter: PrismaAdapter(prisma),
   secret: process.env.NEXTAUTH_SECRET,
   providers: [
@@ -41,7 +41,7 @@ export const authOptions: NextAuthOptions = {
 
       if (userAccount?.provider === account?.provider) return true;
 
-      return "/auth/error?error=Already exist an account with this email";
+      return "/auth/sign-in?error=Already exist an account with this email";
     },
 
     async session({ token, session, user }) {

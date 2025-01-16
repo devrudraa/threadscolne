@@ -50,21 +50,28 @@ export async function GetUserDataFiled({
 }
 
 export async function GetUserData({ username }: { username: string }) {
-  return await prisma.user.findFirst({
-    where: {
-      username: username,
-    },
-    include: {
-      Thread: {
-        where: {
-          parentId: null,
+  try {
+    const UserResult = await prisma.user.findFirst({
+      where: {
+        username: username.trim(),
+      },
+      include: {
+        likedThreads: {
+          select: {
+            _count: true,
+          },
         },
-        select: {
-          _count: true,
+        Thread: {
+          select: {
+            parentId: true,
+            _count: true,
+          },
         },
       },
-    },
-  });
+    });
+
+    return UserResult;
+  } catch (error) {}
 }
 
 export async function isUsernameUnique(username: string): Promise<boolean> {
@@ -99,7 +106,7 @@ export async function setUserUsername({
         id: id,
       },
       data: {
-        username: username,
+        username: username.trim(),
       },
     });
     return true;

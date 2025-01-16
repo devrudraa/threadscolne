@@ -35,9 +35,10 @@ const ChooseUsernameForm: FC<ChooseUsernameProps> = ({ userId, update }) => {
   async function checkUsername(e: UsernameType) {
     try {
       setIsCheckingUsername(true);
+      const trimmedUsername = e.username.trim();
 
       //* Before setting the username we have to check if it is unique or not
-      const isUsernameUniqueResponse = await isUsernameUnique(e.username);
+      const isUsernameUniqueResponse = await isUsernameUnique(trimmedUsername);
 
       if (!isUsernameUniqueResponse)
         form.setError("username", {
@@ -46,7 +47,7 @@ const ChooseUsernameForm: FC<ChooseUsernameProps> = ({ userId, update }) => {
 
       const response = await setUserUsername({
         id: userId,
-        username: e.username,
+        username: trimmedUsername,
       });
 
       // Assuming response is an object with a success property indicating success or failure

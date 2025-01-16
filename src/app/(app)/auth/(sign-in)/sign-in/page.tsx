@@ -1,12 +1,19 @@
 "use client";
 import { FC, useState } from "react";
-import { Button, Divider } from "@nextui-org/react";
+import { Button, Divider, Image } from "@nextui-org/react";
 import { signIn } from "next-auth/react";
 import { BuiltInProviderType } from "next-auth/providers/index";
+import Alert from "@/components/shared/Alert";
+import { useSearchParams } from "next/navigation";
+// import Image from "next/image";
 
 interface pageProps {}
 const Page: FC<pageProps> = ({}) => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
+
+  const searchParams = useSearchParams();
+  const error = searchParams.get("error");
+
   async function signInUser(provider: BuiltInProviderType) {
     setIsLoading(true);
     await signIn(provider, {
@@ -20,23 +27,15 @@ const Page: FC<pageProps> = ({}) => {
     <>
       <main className="grid place-items-center max-w-[100vw] min-h-[100vh] px-5 md:px-0 ">
         <main className="flex md:space-x-5 rounded-xl bg-stone-800 z-10 ">
-          <section className="p-6 md:block hidden">
-            {/* <ShieldImageLogin /> */}
-            {/* <Image
-              src={"/sign-in_mobile_mockup.png"}
-              width={250}
-              height={250}
-              alt="sign-in_mobile_mockup"
-            /> */}
-          </section>
+          <section className="p-6 md:block hidden"></section>
 
-          <section className="bg-dark-4 px-5 py-8 md:-translate-y-3 md:translate-x-3 rounded-xl shadow-md shadow-black drop-shadow-2xl space-y-5">
+          <section className="bg-dark-4 px-5 py-8 md:-translate-y-3 md:translate-x-3 rounded-xl shadow-md shadow-black drop-shadow-2xl space-y-5 max-w-[25rem]">
+            {error && <Alert message={error} />}
             <div className="w-[8rem] h-[8rem] mx-auto">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
+              <Image
                 alt="Profile Picture"
                 className="rounded-md w-[8rem] mx-auto"
-                src={`https://api.dicebear.com/6.x/adventurer-neutral/svg?seed=${Math.random()}`}
+                src="/assets/logo.svg"
               />
             </div>
 

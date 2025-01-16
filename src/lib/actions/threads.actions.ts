@@ -1,10 +1,7 @@
 "use server";
 import { revalidatePath } from "next/cache";
 import prisma from "../PrismaClient";
-import { useSelector } from "react-redux";
-import { RootState } from "../Store/Store";
-import { dataURLtoFile, isBase64Image } from "../utils";
-import { useUploadThing } from "../uploadthing";
+import getAuthSession from "../authOptions";
 
 interface ThreadsParams {
   text: string;
@@ -66,6 +63,14 @@ export async function FetchThreadByPagination({
       createdAt: "desc",
     },
     include: {
+      likedBy: {
+        select: {
+          name: true,
+          id: true,
+          username: true,
+          image: true,
+        },
+      },
       author: {
         select: {
           name: true,
@@ -104,47 +109,69 @@ export async function FetchThreadByPagination({
 // This is used on the dedicated thread page where you have to give all the info of one thread
 
 export async function FetchThreadById(threadId: string) {
-  return await prisma.thread.findFirst({
-    where: {
-      id: threadId,
-    },
-    include: {
-      author: {
-        select: {
-          name: true,
-          image: true,
-          id: true,
-          username: true,
-        },
+  try {
+    const threadPost = await prisma.thread.findFirst({
+      where: {
+        id: threadId,
       },
-      children: {
-        orderBy: {
-          createdAt: "desc",
-        },
-        include: {
-          author: {
-            select: {
-              name: true,
-              image: true,
-              id: true,
-              username: true,
-            },
+      include: {
+        likedBy: {
+          select: {
+            name: true,
+            id: true,
+            username: true,
+            image: true,
           },
-          children: {
-            select: {
-              parent: true,
-              author: {
-                select: {
-                  name: true,
-                  image: true,
+        },
+        author: {
+          select: {
+            id: true,
+            name: true,
+            image: true,
+            username: true,
+          },
+        },
+        children: {
+          orderBy: {
+            createdAt: "desc",
+          },
+          include: {
+            likedBy: {
+              select: {
+                name: true,
+                id: true,
+                username: true,
+                image: true,
+              },
+            },
+            author: {
+              select: {
+                name: true,
+                image: true,
+                id: true,
+                username: true,
+              },
+            },
+            children: {
+              select: {
+                parent: true,
+                author: {
+                  select: {
+                    name: true,
+                    image: true,
+                  },
                 },
               },
             },
           },
         },
       },
-    },
-  });
+    });
+
+    return threadPost;
+  } catch (error) {
+    return false;
+  }
 }
 
 //* ----------------------------------------------------------------addCommentToThread()----------------------------------------------------------------
@@ -206,20 +233,53 @@ export async function addCommentToThread({
 
 interface fetchUserPostsProps {
   id: string;
+  pageNumber?: number;
+  pageSize?: number;
+  isFetchingReplies: boolean;
 }
 
-export async function fetchUserPosts({ id }: fetchUserPostsProps) {
-  const userThread = prisma.thread.findMany({
-    where: {
-      parentId: null,
-      author: {
-        id: id,
-      },
+export async function fetchUserPosts({
+  id,
+  isFetchingReplies,
+  pageNumber = 1,
+  pageSize = 5,
+}: fetchUserPostsProps) {
+  const SkipAmount = (pageNumber - 1) * pageSize;
+
+  let whereCondition: any = {
+    author: {
+      id: id,
     },
+  };
+
+  if (isFetchingReplies) {
+    whereCondition.parentId = {
+      not: null,
+    };
+  } else {
+    whereCondition.parentId = null;
+  }
+  // console.log(whereCondition);
+
+  const userThread = await prisma.thread.findMany({
+    where: {
+      author: { id: id },
+      parentId: isFetchingReplies ? { not: null } : null,
+    },
+    take: pageSize,
+    skip: SkipAmount,
     orderBy: {
       createdAt: "desc",
     },
     include: {
+      likedBy: {
+        select: {
+          name: true,
+          id: true,
+          username: true,
+          image: true,
+        },
+      },
       author: {
         select: {
           username: true,
@@ -230,5 +290,164 @@ export async function fetchUserPosts({ id }: fetchUserPostsProps) {
       },
     },
   });
-  return userThread;
+
+  const totalResults = await prisma.thread.findMany({
+    where: {
+      parentId: null,
+      author: {
+        id: id,
+      },
+    },
+    include: {
+      _count: true,
+    },
+  });
+  const isNext = totalResults.length > SkipAmount + userThread?.length;
+
+  return { userThread, isNext };
+}
+
+//* ---------------------------------------------------------------likeUnLike()------------------------------------------------
+interface likeUnLikeProps {
+  threadId: string;
+  userId: string;
+}
+
+export async function likeUnLike({
+  threadId,
+  userId,
+}: likeUnLikeProps): Promise<
+  { error: boolean; errorMessage: unknown } | null | undefined
+> {
+  try {
+    // Fetch the thread with likedBy relation
+    const existingThread = await prisma.thread.findUnique({
+      where: { id: threadId },
+      include: { likedBy: true },
+    });
+
+    if (!existingThread) {
+      throw new Error(`Thread with id ${threadId} not found`);
+    }
+
+    // Check if the user has already liked the thread
+    const userLikedThread = existingThread.likedBy.some(
+      (user) => user.id === userId
+    );
+
+    if (userLikedThread) {
+      // User has already liked the thread, so remove the like
+      await prisma.thread.update({
+        where: { id: threadId },
+        data: {
+          likedBy: {
+            disconnect: { id: userId },
+          },
+        },
+        include: { likedBy: true }, // Include likedBy relation in the response
+      });
+      // return true;
+    } else {
+      // User has not liked the thread, so add the like
+      await prisma.thread.update({
+        where: { id: threadId },
+        data: {
+          likedBy: {
+            connect: { id: userId },
+          },
+        },
+        include: { likedBy: true }, // Include likedBy relation in the response
+      });
+      // return true;
+    }
+  } catch (error) {
+    console.error("Error adding like:", error);
+    return {
+      error: true,
+      errorMessage: error,
+    };
+  } finally {
+    await prisma.$disconnect(); // Disconnect the Prisma client
+  }
+}
+
+//* ------------------------------------------------------- Thread Liked By -----------------------------------------
+
+interface ThreadLikedByProps {
+  threadId: string;
+}
+interface Error {
+  error: boolean;
+  errorMessage: unknown;
+}
+interface Data {
+  likedBy: {
+    image: string;
+    username: string | null;
+    name: string;
+  }[];
+}
+
+export type threadLikedByReturnValue = Error | Data;
+export async function threadLikedBy({
+  threadId,
+}: ThreadLikedByProps): Promise<threadLikedByReturnValue> {
+  try {
+    // Fetch the thread with likedBy relation
+    const existingThread = await prisma.thread.findUnique({
+      where: { id: threadId },
+      select: {
+        likedBy: {
+          select: {
+            name: true,
+            username: true,
+            image: true,
+          },
+        },
+      },
+    });
+
+    if (!existingThread) {
+      return {
+        error: true,
+        errorMessage: "Thread not found!",
+      };
+    }
+
+    return existingThread;
+  } catch (error) {
+    console.error("Error adding like:", error);
+    return {
+      error: true,
+      errorMessage: error,
+    };
+  } finally {
+    await prisma.$disconnect(); // Disconnect the Prisma client
+  }
+}
+
+//* ------------------------------------------------------- DeleteThread -----------------------------------------
+interface DeleteThreadProps {
+  threadId: string;
+  authorId: string;
+}
+
+export async function DeleteThread({ threadId, authorId }: DeleteThreadProps) {
+  const session = await getAuthSession();
+  if (!session) return null;
+  if (session?.user.id != authorId) return null;
+  try {
+    //! Deleting the children
+    await prisma.thread.deleteMany({
+      where: { parentId: threadId },
+    });
+
+    //! Deleting the main thread
+    await prisma.thread.delete({
+      where: { id: threadId },
+    });
+    return true;
+  } catch (error) {
+    return null;
+  }
 }

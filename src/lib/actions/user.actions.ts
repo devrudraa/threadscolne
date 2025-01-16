@@ -120,3 +120,68 @@ updateUserDataProps): Promise<boolean> {
     return false;
   }
 }
+
+// * --------------------------------------------------------------fetchUserLikedPostsProps-----------------------------------------
+
+interface fetchUserLikedPostsProps {
+  id: string;
+  pageNumber?: number;
+  pageSize?: number;
+}
+
+export async function fetchUserLikedPosts({
+  id,
+  pageNumber = 1,
+  pageSize = 5,
+}: fetchUserLikedPostsProps) {
+  const SkipAmount = (pageNumber - 1) * pageSize;
+
+  const userLikedThreads = await prisma.user.findMany({
+    where: {
+      id: id,
+    },
+    take: pageSize,
+    skip: SkipAmount,
+    select: {
+      likedThreads: {
+        orderBy: {
+          createdAt: "desc",
+        },
+        include: {
+          likedBy: {
+            select: {
+              name: true,
+              id: true,
+              username: true,
+              image: true,
+            },
+          },
+          author: {
+            select: {
+              username: true,
+              name: true,
+              image: true,
+              id: true,
+            },
+          },
+        },
+      },
+    },
+  });
+
+  const totalResults = await prisma.thread.findMany({
+    where: {
+      parentId: null,
+      author: {
+        id: id,
+      },
+    },
+    include: {
+      _count: true,
+    },
+  });
+  const isNext = totalResults.length > SkipAmount + userLikedThreads?.length;
+  const Threads = userLikedThreads.reduce((e) => e);
+
+  return { ...Threads, isNext };
+}

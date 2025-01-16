@@ -4,6 +4,7 @@ import CommentForm from "@/components/forms/Comment";
 import { FetchThreadById } from "@/lib/actions/threads.actions";
 import getAuthSession from "@/lib/authOptions";
 import { FC } from "react";
+import Alert from "@/components/shared/Alert";
 
 interface pageProps {
   params: { id: string };
@@ -16,13 +17,17 @@ const Page: FC<pageProps> = async ({ params }) => {
   // if (!userOnBoarded) return redirect("/onboarding");
 
   const thread = await FetchThreadById(params.id);
-  if (!thread) return null;
+  if (!thread)
+    return (
+      <Alert message="Thread not found it might be deleted by the user!" />
+    );
 
   return (
     <section className="relative">
       <div>
         <ThreadCard
           key={thread.id}
+          likedBy={thread.likedBy}
           id={thread.id}
           // currentUser={thread.id}
           image={thread.image}
@@ -49,6 +54,7 @@ const Page: FC<pageProps> = async ({ params }) => {
           return (
             <ThreadCard
               key={childItem.id}
+              likedBy={childItem.likedBy}
               id={childItem.id}
               image={thread.image}
               imageDesc={thread.imageDesc}
